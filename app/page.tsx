@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getDefaultMetadata } from "@/lib/seo";
+import { allTools } from "@/lib/toolsData";
 import { HeroDemo } from "@/components/HeroDemo";
 import { TrueFocusHeading } from "@/components/TrueFocusHeading";
 import {
@@ -8,19 +9,8 @@ import {
   User,
   Zap,
   Smartphone,
-  ImageIcon,
-  FileText,
-  Camera,
-  PenTool,
   ArrowRight,
   CheckCircle2,
-  Layers,
-  Scissors,
-  FileType,
-  Shrink,
-  Crop,
-  ArrowRightToLine,
-  ArrowLeftFromLine,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -41,99 +31,6 @@ export const metadata: Metadata = {
     path: "/",
   }),
 };
-
-const tools = [
-  {
-    href: "/tools/resize-image-to-100kb",
-    title: "Resize Image",
-    description: "Resize images to 20KB, 50KB or 100KB for government forms and uploads.",
-    icon: ImageIcon,
-  },
-  {
-    href: "/tools/compress-image",
-    title: "Compress Image",
-    description: "Reduce image file size without losing quality. Compress JPG, PNG, and WebP in bulk with ease.",
-    icon: Shrink,
-  },
-  {
-    href: "/tools/crop-image",
-    title: "Crop Image",
-    description: "Crop images to the exact size or area you need. Free and browser-based.",
-    icon: Crop,
-  },
-  {
-    href: "/tools/convert-to-png",
-    title: "Convert to PNG",
-    description: "Turn JPG, GIF, WebP, BMP, or TIF format images to PNG in bulk with ease.",
-    icon: ArrowRightToLine,
-  },
-  {
-    href: "/tools/convert-from-jpg",
-    title: "Convert from JPG",
-    description: "Turn JPG images to PNG and GIF. Choose several JPGs to create an animated GIF in seconds!",
-    icon: ArrowLeftFromLine,
-  },
-  {
-    href: "/tools/pdf-compressor",
-    title: "Compress PDF",
-    description: "Reduce PDF file size without losing quality. Secure and fast.",
-    icon: FileText,
-  },
-  {
-    href: "/tools/merge-pdf",
-    title: "Merge PDF",
-    description: "Combine multiple PDFs into one file. Reorder pages and merge in seconds.",
-    icon: Layers,
-  },
-  {
-    href: "/tools/split-pdf",
-    title: "Split PDF",
-    description: "Split one PDF into multiple files. Extract pages or split by range.",
-    icon: Scissors,
-  },
-  {
-    href: "/tools/pdf-to-word",
-    title: "PDF to Word",
-    description: "Convert PDF to editable DOC or DOCX. Preserve layout and formatting.",
-    icon: FileType,
-  },
-  {
-    href: "/tools/word-to-pdf",
-    title: "Word to PDF",
-    description: "Convert DOC or DOCX documents to PDF. Preserve layout and formatting.",
-    icon: FileType,
-  },
-  {
-    href: "/tools/pdf-to-jpg",
-    title: "PDF to JPG",
-    description: "Convert each PDF page to JPG or extract all images from a PDF.",
-    icon: ImageIcon,
-  },
-  {
-    href: "/tools/jpg-to-pdf",
-    title: "JPG to PDF",
-    description: "Convert JPG images to PDF in seconds. Adjust orientation and margins.",
-    icon: FileText,
-  },
-  {
-    href: "/tools/image-to-pdf",
-    title: "Image to PDF",
-    description: "Convert any image type — JPG, PNG, WebP, GIF, BMP, TIF — to PDF in seconds.",
-    icon: ImageIcon,
-  },
-  {
-    href: "/tools/passport-photo",
-    title: "Passport Photo",
-    description: "Create passport and visa photos with correct size and background.",
-    icon: Camera,
-  },
-  {
-    href: "/tools/signature-extractor",
-    title: "Signature Extractor",
-    description: "Extract a clean signature from a photo or document.",
-    icon: PenTool,
-  },
-] as const;
 
 const steps = [
   {
@@ -247,7 +144,7 @@ export default function HomePage() {
           All tools are free. Processing runs in your browser when possible.
         </p>
         <ul className="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {tools.map(({ href, title, description, icon: Icon }) => (
+          {allTools.map(({ href, title, description, icon: Icon }) => (
             <li key={href} className="flex">
               <Link
                 href={href}

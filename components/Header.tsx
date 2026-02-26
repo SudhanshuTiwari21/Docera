@@ -1,50 +1,208 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Sun, Moon } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Sun, Moon, ChevronDown, MoreVertical } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
+import {
+  allImageToolsColumns,
+  allPdfToolsColumns,
+  convertPdfDropdownTools,
+} from "@/lib/toolsData";
 
-const navLinks = [
-  { href: "/tools/image-resizer", label: "Image Resizer" },
-  { href: "/tools/pdf-compressor", label: "PDF Compressor" },
-  { href: "/tools/passport-photo", label: "Passport Photo" },
-  { href: "/tools/signature-extractor", label: "Signature Extractor" },
-] as const;
+const topBarClass =
+  "h-1.5 bg-[#3d2914] dark:bg-amber-950";
+
+type DropdownId = "convert-pdf" | "all-image" | "all-pdf" | null;
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
 
+  useEffect(() => {
+    if (!openDropdown) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openDropdown]);
+
+  const mainNav = (
+    <nav
+      className="hidden h-full items-center justify-center gap-0.5 sm:flex lg:gap-1"
+      aria-label="Main navigation"
+    >
+      <Link
+        href="/tools/resize-image-to-100kb"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        Resize Image
+      </Link>
+      <Link
+        href="/tools/compress-image"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        Compress Image
+      </Link>
+      <Link
+        href="/tools/pdf-compressor"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        Compress PDF
+      </Link>
+
+      {/* Convert PDF dropdown */}
+      <div
+        className="relative flex h-full items-center"
+        ref={openDropdown === "convert-pdf" ? dropdownRef : undefined}
+        onMouseEnter={() => setOpenDropdown("convert-pdf")}
+        onMouseLeave={() => setOpenDropdown(null)}
+      >
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+          aria-expanded={openDropdown === "convert-pdf"}
+          aria-haspopup="true"
+          aria-controls="convert-pdf-menu"
+          id="convert-pdf-trigger"
+        >
+          <span className="whitespace-nowrap">Convert PDF</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 transition ${openDropdown === "convert-pdf" ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </button>
+        {openDropdown === "convert-pdf" && (
+          <div
+            id="convert-pdf-menu"
+            role="menu"
+            aria-labelledby="convert-pdf-trigger"
+            className="absolute left-0 top-full z-[60] mt-1 min-w-[220px] rounded-lg border border-slate-200 bg-white py-2 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+          >
+            {convertPdfDropdownTools.map(({ href, title, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                role="menuitem"
+                className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+                onClick={() => setOpenDropdown(null)}
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                  <Icon className="h-4 w-4" aria-hidden />
+                </span>
+                {title}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* All Image Tools dropdown */}
+      <div
+        className="relative flex h-full items-center"
+        ref={openDropdown === "all-image" ? dropdownRef : undefined}
+        onMouseEnter={() => setOpenDropdown("all-image")}
+        onMouseLeave={() => setOpenDropdown(null)}
+      >
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+          aria-expanded={openDropdown === "all-image"}
+          aria-haspopup="true"
+          aria-controls="all-image-menu"
+          id="all-image-trigger"
+        >
+          <span className="whitespace-nowrap">All Image Tools</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 transition ${openDropdown === "all-image" ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </button>
+        {openDropdown === "all-image" && (
+          <MegaMenu
+            id="all-image-menu"
+            ariaLabelledby="all-image-trigger"
+            columns={allImageToolsColumns}
+            onLinkClick={() => setOpenDropdown(null)}
+          />
+        )}
+      </div>
+
+      {/* All PDF Tools dropdown */}
+      <div
+        className="relative flex h-full items-center"
+        ref={openDropdown === "all-pdf" ? dropdownRef : undefined}
+        onMouseEnter={() => setOpenDropdown("all-pdf")}
+        onMouseLeave={() => setOpenDropdown(null)}
+      >
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
+          aria-expanded={openDropdown === "all-pdf"}
+          aria-haspopup="true"
+          aria-controls="all-pdf-menu"
+          id="all-pdf-trigger"
+        >
+          <span className="whitespace-nowrap">All PDF Tools</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 transition ${openDropdown === "all-pdf" ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </button>
+        {openDropdown === "all-pdf" && (
+          <MegaMenu
+            id="all-pdf-menu"
+            ariaLabelledby="all-pdf-trigger"
+            columns={allPdfToolsColumns}
+            onLinkClick={() => setOpenDropdown(null)}
+          />
+        )}
+      </div>
+    </nav>
+  );
+
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-slate-800 dark:bg-slate-900/95">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      {/* Top dark strip */}
+      <div className={topBarClass} aria-hidden />
+
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 pl-6 pr-6 sm:pl-8 sm:pr-8 lg:pl-10 lg:pr-10">
         <Link
           href="/"
-          className="text-xl font-semibold text-slate-900 dark:text-slate-100"
+          className="shrink-0 text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 lg:text-xl"
           aria-label="DocMint – Home"
         >
           DocMint
         </Link>
 
-        <div className="flex items-center gap-2">
-          {/* Desktop nav */}
-          <nav
-            className="hidden items-center gap-1 sm:flex sm:gap-2"
-            aria-label="Main navigation"
-          >
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
+        {/* Desktop: center nav – takes remaining space, no overlap */}
+        <div className="hidden min-w-0 flex-1 justify-center sm:flex sm:h-full">
+          {mainNav}
+        </div>
 
-          {/* Theme toggle */}
+        {/* Right: Login, Sign up, theme, mobile menu */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <div className="hidden items-center gap-2 sm:flex">
+            <Link
+              href="/login"
+              className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+            >
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 dark:focus-visible:outline-slate-100"
+            >
+              Sign up
+            </Link>
+          </div>
+
           <button
             type="button"
             onClick={toggleTheme}
@@ -58,40 +216,16 @@ export function Header() {
             )}
           </button>
 
-          {/* Mobile menu button */}
           <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 sm:hidden"
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-nav"
-          aria-label="Toggle menu"
-          onClick={() => setMobileOpen((o) => !o)}
-        >
-          <span className="sr-only">Toggle menu</span>
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden
+            type="button"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 sm:hidden"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
+            aria-label="Toggle menu"
+            onClick={() => setMobileOpen((o) => !o)}
           >
-            {mobileOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
+            <MoreVertical className="h-6 w-6" aria-hidden />
+          </button>
         </div>
       </div>
 
@@ -104,18 +238,189 @@ export function Header() {
         aria-hidden={!mobileOpen}
       >
         <nav className="flex flex-col px-4 py-3" aria-label="Main navigation">
-          {navLinks.map(({ href, label }) => (
+          <Link
+            href="/tools/resize-image-to-100kb"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            Resize Image
+          </Link>
+          <Link
+            href="/tools/compress-image"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            Compress Image
+          </Link>
+          <Link
+            href="/tools/pdf-compressor"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            Compress PDF
+          </Link>
+          <MobileDropdownSection
+            title="Convert PDF"
+            tools={convertPdfDropdownTools}
+            onLinkClick={() => setMobileOpen(false)}
+          />
+          <MobileDropdownSection
+            title="All Image Tools"
+            columns={allImageToolsColumns}
+            onLinkClick={() => setMobileOpen(false)}
+          />
+          <MobileDropdownSection
+            title="All PDF Tools"
+            columns={allPdfToolsColumns}
+            onLinkClick={() => setMobileOpen(false)}
+          />
+          <div className="mt-2 flex gap-2 border-t border-slate-200 pt-3 dark:border-slate-700">
             <Link
-              key={href}
-              href={href}
-              className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+              href="/login"
+              className="flex-1 rounded-md border border-slate-300 px-3 py-2.5 text-center text-sm font-medium text-slate-700 dark:border-slate-600 dark:text-slate-300"
               onClick={() => setMobileOpen(false)}
             >
-              {label}
+              Login
             </Link>
-          ))}
+            <Link
+              href="/signup"
+              className="flex-1 rounded-md bg-slate-900 px-3 py-2.5 text-center text-sm font-semibold text-white dark:bg-slate-100 dark:text-slate-900"
+              onClick={() => setMobileOpen(false)}
+            >
+              Sign up
+            </Link>
+          </div>
         </nav>
       </div>
     </header>
   );
+}
+
+type MegaMenuProps = {
+  id: string;
+  ariaLabelledby: string;
+  columns: { heading: string; tools: { href: string; title: string; icon: LucideIcon }[] }[];
+  onLinkClick: () => void;
+};
+
+function MegaMenu({ id, ariaLabelledby, columns, onLinkClick }: MegaMenuProps) {
+  return (
+    <div
+      id={id}
+      role="menu"
+      aria-labelledby={ariaLabelledby}
+      className="absolute left-1/2 top-full z-[60] mt-1 w-[min(90vw,680px)] -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800"
+    >
+      <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
+        {columns.map((col) => (
+          <div key={col.heading}>
+            <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              {col.heading}
+            </h3>
+            <ul className="space-y-1">
+              {col.tools.map(({ href, title, icon: Icon }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    role="menuitem"
+                    className="flex items-center gap-3 rounded-md py-2 pr-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+                    onClick={onLinkClick}
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    {title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MobileDropdownSection({
+  title,
+  onLinkClick,
+  tools,
+  columns,
+}: {
+  title: string;
+  onLinkClick: () => void;
+  tools?: { href: string; title: string; icon: LucideIcon }[];
+  columns?: { heading: string; tools: { href: string; title: string; icon: LucideIcon }[] }[];
+}) {
+  const [open, setOpen] = useState(false);
+  if (tools) {
+    return (
+      <div className="border-t border-slate-100 dark:border-slate-800">
+        <button
+          type="button"
+          className="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-600 dark:text-slate-400"
+          onClick={() => setOpen((o) => !o)}
+        >
+          {title}
+          <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <ul className="space-y-0.5 pb-2 pl-3">
+            {tools.map(({ href, title: t, icon: Icon }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-slate-600 dark:text-slate-400"
+                  onClick={onLinkClick}
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                  {t}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (columns) {
+    return (
+      <div className="border-t border-slate-100 dark:border-slate-800">
+        <button
+          type="button"
+          className="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-600 dark:text-slate-400"
+          onClick={() => setOpen((o) => !o)}
+        >
+          {title}
+          <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <div className="space-y-4 pb-2 pl-3">
+            {columns.map((col) => (
+              <div key={col.heading}>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {col.heading}
+                </h4>
+                <ul className="mt-1 space-y-0.5">
+                  {col.tools.map(({ href, title: t, icon: Icon }) => (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-slate-600 dark:text-slate-400"
+                        onClick={onLinkClick}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                        {t}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+  return null;
 }
