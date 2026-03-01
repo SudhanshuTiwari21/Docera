@@ -174,8 +174,8 @@ export function Header() {
           {mainNav}
         </div>
 
-        {/* Right: Pricing, Login, Sign up, theme, mobile menu */}
-        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+        {/* Right: Pricing, Login, Sign up, theme, mobile menu – z-10 + bg so it stays on top of nav overflow */}
+        <div className="relative z-10 ml-auto flex shrink-0 items-center gap-2 bg-white pl-6 dark:bg-slate-900 sm:gap-3">
           <div className="hidden items-center gap-3 sm:flex">
             <Link
               href="/pricing"

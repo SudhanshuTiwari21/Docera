@@ -21,17 +21,19 @@ function getInitialTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function applyTheme(theme: Theme) {
+function applyTheme(theme: Theme, persist = true) {
   const root = document.documentElement;
   if (theme === "dark") {
     root.classList.add("dark");
   } else {
     root.classList.remove("dark");
   }
-  try {
-    localStorage.setItem(STORAGE_KEY, theme);
-  } catch {
-    // ignore
+  if (persist) {
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      // ignore
+    }
   }
 }
 
@@ -40,9 +42,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
     const initial = getInitialTheme();
     setThemeState(initial);
-    applyTheme(initial);
+    // Only persist when user had a stored preference; otherwise follow system and don't store
+    applyTheme(initial, stored === "dark" || stored === "light");
     setMounted(true);
   }, []);
 
