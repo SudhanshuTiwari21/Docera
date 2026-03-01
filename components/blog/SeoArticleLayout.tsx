@@ -3,7 +3,7 @@ import Link from "next/link";
 import { buildCanonicalUrl } from "@/lib/seo";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://docera.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in";
 
 export type SeoArticleLayoutProps = {
   title: string;

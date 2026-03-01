@@ -7,7 +7,7 @@ Use this doc with Google Search Console data to turn rankings and impressions in
 ## 1. Using Google Search Console
 
 1. **Add and verify the property**  
-   Go to [Search Console](https://search.google.com/search-console). Add property for your live domain (e.g. `https://docera.com`). Verify via DNS (recommended) or HTML file.
+   Go to [Search Console](https://search.google.com/search-console). Add property for your live domain (e.g. `https://dockera.in`). Verify via DNS (recommended) or HTML file.
 
 2. **Wait for data**  
    After verification, allow 2–4 weeks for meaningful impression/click/position data.

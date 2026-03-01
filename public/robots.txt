@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://docera.com/sitemap.xml
+Sitemap: https://dockera.in/sitemap.xml

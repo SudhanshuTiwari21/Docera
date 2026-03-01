@@ -36,7 +36,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment
 
-Set `NEXT_PUBLIC_SITE_URL` for production (e.g. `https://docera.com`) so canonical URLs and sitemap use the correct domain.
+Set `NEXT_PUBLIC_SITE_URL` for production (e.g. `https://dockera.in`) so canonical URLs and sitemap use the correct domain.
 
 ## Folder structure
 
