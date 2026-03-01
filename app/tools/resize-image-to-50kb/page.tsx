@@ -93,23 +93,11 @@ export default function ResizeImageTo50kbPage() {
       <div className="mb-14">
         <ResizeImageTool
           defaultTargetSize={50}
-          seoTitle="Resize Image to 50KB | Docera"
+          seoTitle="Resize Image to 50KB | Dockera"
           seoDescription=""
           heading="Resize image to 50KB"
         />
       </div>
-
-      <section className="mb-12" aria-labelledby="how-to-heading">
-        <h2 id="how-to-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          How to resize image to 50KB
-        </h2>
-        <ol className="mt-4 list-inside list-decimal space-y-2 text-slate-600 dark:text-slate-400">
-          <li>Upload your photo using the tool above.</li>
-          <li>Select 50 KB as the target size (or 20KB / 100KB if needed).</li>
-          <li>Click &quot;Resize image&quot;—compression runs in your browser.</li>
-          <li>Preview and download the resized image.</li>
-        </ol>
-      </section>
 
       <section className="mb-12" aria-labelledby="context-heading">
         <h2 id="context-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">

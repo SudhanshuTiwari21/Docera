@@ -81,7 +81,7 @@ export function HeroDemo() {
       {mediaState === "gif" && (
         <Image
           src="/hero-demo.gif"
-          alt="Docera in action"
+          alt="Dockera in action"
           fill
           className="object-contain"
           sizes="(max-width: 1024px) 100vw, 1024px"

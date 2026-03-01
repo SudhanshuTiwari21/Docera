@@ -1,4 +1,4 @@
-# Docera
+# Dockera
 
 Production-ready Next.js 14 project for document and image tools (resize image for govt forms, compress PDF online India, passport photo size tool).
 

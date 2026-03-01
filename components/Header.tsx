@@ -14,7 +14,7 @@ import {
 const topBarClass =
   "h-1.5 bg-[#3d2914] dark:bg-amber-950";
 
-type DropdownId = "convert-pdf" | "all-image" | "all-pdf" | null;
+type DropdownId = "all-pdf" | null;
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,81 +57,52 @@ export function Header() {
         Compress PDF
       </Link>
 
-      {/* Convert PDF dropdown */}
-      <div
-        className="relative flex h-full items-center"
-        ref={openDropdown === "convert-pdf" ? dropdownRef : undefined}
-        onMouseEnter={() => setOpenDropdown("convert-pdf")}
-        onMouseLeave={() => setOpenDropdown(null)}
-      >
-        <button
-          type="button"
-          className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
-          aria-expanded={openDropdown === "convert-pdf"}
-          aria-haspopup="true"
-          aria-controls="convert-pdf-menu"
-          id="convert-pdf-trigger"
+      {/* Convert PDF dropdown – DaisyUI */}
+      <div className="dropdown dropdown-end dropdown-hover">
+        <div
+          tabIndex={0}
+          role="button"
+          className="inline-flex h-full cursor-pointer items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
         >
           <span className="whitespace-nowrap">Convert PDF</span>
-          <ChevronDown
-            className={`h-4 w-4 shrink-0 transition ${openDropdown === "convert-pdf" ? "rotate-180" : ""}`}
-            aria-hidden
-          />
-        </button>
-        {openDropdown === "convert-pdf" && (
-          <div
-            id="convert-pdf-menu"
-            role="menu"
-            aria-labelledby="convert-pdf-trigger"
-            className="absolute left-0 top-full z-[60] mt-1 min-w-[220px] rounded-lg border border-slate-200 bg-white py-2 shadow-lg dark:border-slate-700 dark:bg-slate-800"
-          >
-            {convertPdfDropdownTools.map(({ href, title, icon: Icon }) => (
+          <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
+        </div>
+        <ul
+          tabIndex={-1}
+          className="menu dropdown-content z-[60] mt-1 min-w-[220px] rounded-box border border-base-300 bg-base-100 p-2 shadow-xl"
+        >
+          {convertPdfDropdownTools.map(({ href, title, icon: Icon }) => (
+            <li key={href}>
               <Link
-                key={href}
                 href={href}
-                role="menuitem"
-                className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
-                onClick={() => setOpenDropdown(null)}
+                className="flex items-center gap-3 rounded-lg"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                   <Icon className="h-4 w-4" aria-hidden />
                 </span>
                 {title}
               </Link>
-            ))}
-          </div>
-        )}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* All Image Tools dropdown */}
-      <div
-        className="relative flex h-full items-center"
-        ref={openDropdown === "all-image" ? dropdownRef : undefined}
-        onMouseEnter={() => setOpenDropdown("all-image")}
-        onMouseLeave={() => setOpenDropdown(null)}
-      >
-        <button
-          type="button"
-          className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
-          aria-expanded={openDropdown === "all-image"}
-          aria-haspopup="true"
-          aria-controls="all-image-menu"
-          id="all-image-trigger"
+      {/* All Image Tools dropdown – DaisyUI */}
+      <div className="dropdown dropdown-bottom dropdown-center dropdown-hover">
+        <div
+          tabIndex={0}
+          role="button"
+          className="inline-flex h-full cursor-pointer items-center gap-1 rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 lg:px-3"
         >
           <span className="whitespace-nowrap">All Image Tools</span>
-          <ChevronDown
-            className={`h-4 w-4 shrink-0 transition ${openDropdown === "all-image" ? "rotate-180" : ""}`}
-            aria-hidden
-          />
-        </button>
-        {openDropdown === "all-image" && (
-          <MegaMenu
-            id="all-image-menu"
-            ariaLabelledby="all-image-trigger"
-            columns={allImageToolsColumns}
-            onLinkClick={() => setOpenDropdown(null)}
-          />
-        )}
+          <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
+        </div>
+        <div
+          tabIndex={-1}
+          className="dropdown-content z-[60] mt-1 w-[min(90vw,680px)] rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl"
+        >
+          <MegaMenuContent columns={allImageToolsColumns} />
+        </div>
       </div>
 
       {/* All PDF Tools dropdown */}
@@ -176,9 +147,9 @@ export function Header() {
         <Link
           href="/"
           className="mr-6 shrink-0 text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 lg:mr-8 lg:text-xl"
-          aria-label="Docera – Home"
+          aria-label="Dockera – Home"
         >
-          Docera
+          Dockera
         </Link>
 
         {/* Desktop: center nav – left-aligned so first links (Resize Image) aren't clipped */}
@@ -296,10 +267,42 @@ export function Header() {
   );
 }
 
+type MegaMenuColumns = { heading: string; tools: { href: string; title: string; icon: LucideIcon }[] }[];
+
+function MegaMenuContent({ columns, onLinkClick }: { columns: MegaMenuColumns; onLinkClick?: () => void }) {
+  return (
+    <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
+      {columns.map((col) => (
+        <div key={col.heading}>
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {col.heading}
+          </h3>
+          <ul className="space-y-1">
+            {col.tools.map(({ href, title, icon: Icon }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="flex items-center gap-3 rounded-md py-2 pr-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
+                  onClick={onLinkClick}
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  {title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 type MegaMenuProps = {
   id: string;
   ariaLabelledby: string;
-  columns: { heading: string; tools: { href: string; title: string; icon: LucideIcon }[] }[];
+  columns: MegaMenuColumns;
   onLinkClick: () => void;
 };
 
@@ -311,32 +314,7 @@ function MegaMenu({ id, ariaLabelledby, columns, onLinkClick }: MegaMenuProps) {
       aria-labelledby={ariaLabelledby}
       className="absolute left-1/2 top-full z-[60] mt-1 w-[min(90vw,680px)] -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800"
     >
-      <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-        {columns.map((col) => (
-          <div key={col.heading}>
-            <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              {col.heading}
-            </h3>
-            <ul className="space-y-1">
-              {col.tools.map(({ href, title, icon: Icon }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    role="menuitem"
-                    className="flex items-center gap-3 rounded-md py-2 pr-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700"
-                    onClick={onLinkClick}
-                  >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    {title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <MegaMenuContent columns={columns} onLinkClick={onLinkClick} />
     </div>
   );
 }

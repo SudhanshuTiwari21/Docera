@@ -5,7 +5,7 @@ import { getDefaultMetadata } from "@/lib/seo";
 export const metadata: Metadata = {
   ...getDefaultMetadata({
     title: "Privacy Policy",
-    description: "Docera privacy policy. How we handle your data when you use our document and image tools.",
+    description: "Dockera privacy policy. How we handle your data when you use our document and image tools.",
     path: "/privacy",
   }),
 };

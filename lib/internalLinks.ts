@@ -1,5 +1,5 @@
 /**
- * Centralized internal link clusters for Docera.
+ * Centralized internal link clusters for Dockera.
  * Use keyword-rich, natural anchor text. Avoid generic "Click here".
  */
 

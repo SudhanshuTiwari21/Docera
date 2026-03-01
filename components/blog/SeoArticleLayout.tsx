@@ -29,14 +29,14 @@ export type SeoArticleMetadataParams = {
 export function getSeoArticleMetadata(params: SeoArticleMetadataParams): Metadata {
   const { title, description, keywords = [], canonicalPath } = params;
   const canonical = buildCanonicalUrl(canonicalPath);
-  const fullTitle = title.includes("Docera") ? title : `${title} | Docera`;
+  const fullTitle = title.includes("Dockera") ? title : `${title} | Dockera`;
 
   return {
     title: fullTitle,
     description,
     keywords: keywords.length > 0 ? keywords.join(", ") : undefined,
-    authors: [{ name: "Docera", url: SITE_URL }],
-    creator: "Docera",
+    authors: [{ name: "Dockera", url: SITE_URL }],
+    creator: "Dockera",
     metadataBase: new URL(SITE_URL),
     alternates: { canonical },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
@@ -45,7 +45,7 @@ export function getSeoArticleMetadata(params: SeoArticleMetadataParams): Metadat
       url: canonical,
       title: fullTitle,
       description,
-      siteName: "Docera",
+      siteName: "Dockera",
       locale: "en_IN",
     },
     twitter: {
@@ -72,7 +72,7 @@ function buildArticleSchema(
     url: canonical,
     publisher: {
       "@type": "Organization",
-      name: "Docera",
+      name: "Dockera",
       url: SITE_URL,
     },
   };

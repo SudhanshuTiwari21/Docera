@@ -42,7 +42,7 @@ const faqSchema = {
       name: "How can I resize my image for free?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Use an online tool that runs in your browser, such as Docera's resize image tool. Upload your photo, select the target size (20KB, 50KB, or 100KB), and download the resized image. No sign-up required.",
+        text: "Use an online tool that runs in your browser, such as Dockera's resize image tool. Upload your photo, select the target size (20KB, 50KB, or 100KB), and download the resized image. No sign-up required.",
       },
     },
   ],

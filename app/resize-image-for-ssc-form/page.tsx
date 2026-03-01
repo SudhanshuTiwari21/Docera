@@ -93,23 +93,11 @@ export default function ResizeImageForSscFormPage() {
       <div className="mb-14">
         <ResizeImageTool
           defaultTargetSize={50}
-          seoTitle="Resize Image for SSC Form | Docera"
+          seoTitle="Resize Image for SSC Form | Dockera"
           seoDescription=""
           heading="Resize image for SSC form"
         />
       </div>
-
-      <section className="mb-12" aria-labelledby="how-to-heading">
-        <h2 id="how-to-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          How to resize image for SSC form
-        </h2>
-        <ol className="mt-4 list-inside list-decimal space-y-2 text-slate-600 dark:text-slate-400">
-          <li>Upload your passport-size or recent photograph.</li>
-          <li>Select the size required by SSC (e.g. 50KB or 100KB—check the notification).</li>
-          <li>Click &quot;Resize image&quot;. Compression runs in your browser.</li>
-          <li>Download the resized image and use it in your SSC application.</li>
-        </ol>
-      </section>
 
       <section className="mb-12" aria-labelledby="context-heading">
         <h2 id="context-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">

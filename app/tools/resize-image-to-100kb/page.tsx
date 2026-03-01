@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: buildOptimizedTitle("Resize Image to 100KB Online", { intent: "govt" }),
     description:
       "Resize image to 100KB, 50KB or 20KB online for forms, applications and uploads—SSC, UPSC, railway, jobs, college and more. Free image size reducer—no sign-up, processing in your browser.",
-    siteName: "Docera",
+    siteName: "Dockera",
     locale: "en_IN",
     type: "website",
   },
@@ -91,7 +91,7 @@ const howToSchema = {
   "@context": "https://schema.org",
   "@type": "HowTo",
   name: "How to resize image to 100KB for government forms",
-  description: "Steps to resize your photo to 100KB or less for SSC, UPSC, railway and other Indian government forms using Docera.",
+  description: "Steps to resize your photo to 100KB or less for SSC, UPSC, railway and other Indian government forms using Dockera.",
   step: [
     {
       "@type": "HowToStep",
@@ -157,26 +157,11 @@ export default function ResizeImageTo100kbPage() {
       <div className="mb-14">
         <ResizeImageTool
           defaultTargetSize={100}
-          seoTitle="Resize Image to 100KB Online for Govt Forms | Docera India"
+          seoTitle="Resize Image to 100KB Online for Govt Forms | Dockera India"
           seoDescription=""
           heading="Resize image to 100KB"
         />
       </div>
-
-      <section
-        className="mb-12"
-        aria-labelledby="how-to-heading"
-      >
-        <h2 id="how-to-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          How to resize image to 100KB
-        </h2>
-        <ol className="mt-4 list-inside list-decimal space-y-2 text-slate-600 dark:text-slate-400">
-          <li>Upload your photo using the tool above.</li>
-          <li>Select the target size (20KB, 50KB, 100KB or enter a custom size).</li>
-          <li>Click &quot;Resize image&quot;—compression runs in your browser.</li>
-          <li>Preview the result and download the resized image.</li>
-        </ol>
-      </section>
 
       <section
         className="mb-12"

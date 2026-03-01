@@ -5,7 +5,7 @@ import { getDefaultMetadata } from "@/lib/seo";
 export const metadata: Metadata = {
   ...getDefaultMetadata({
     title: "Terms of Use",
-    description: "Docera terms of use. Rules and conditions for using our document and image tools.",
+    description: "Dockera terms of use. Rules and conditions for using our document and image tools.",
     path: "/terms",
   }),
 };

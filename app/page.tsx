@@ -15,7 +15,7 @@ import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
 export const metadata: Metadata = {
   ...getDefaultMetadata({
-    title: "Docera – Free Online Document & Image Tools",
+    title: "Dockera – Free Online Document & Image Tools",
     description:
       "Every tool you need for documents and images in one place. Resize images for government forms, compress PDFs, create passport photos, extract signatures. 100% free, private, and easy to use.",
     keywords: [
@@ -38,8 +38,8 @@ const faqs = [
     a: "Use our Resize Image tool: upload your photo, select 100KB as the target size, and click Resize. The tool runs in your browser and outputs a file under 100KB. You can also choose 20KB or 50KB for stricter form limits.",
   },
   {
-    q: "Is Docera safe?",
-    a: "Yes. Docera is designed for privacy. Processing runs in your browser where possible, and we don't store your files. No sign-up is required to use the tools.",
+    q: "Is Dockera safe?",
+    a: "Yes. Dockera is designed for privacy. Processing runs in your browser where possible, and we don't store your files. No sign-up is required to use the tools.",
   },
   {
     q: "Do files get uploaded?",
@@ -154,7 +154,7 @@ export default function HomePage() {
       </section>
 
       {/* Hero demo – browser mockup with tool preview or video/gif */}
-      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16 lg:px-8" aria-label="Docera in action">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16 lg:px-8" aria-label="Dockera in action">
         <div className="animate-fade-in-up w-full max-w-4xl mx-auto rounded-2xl overflow-hidden">
           <HeroDemo />
         </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
       {/* Trust strip */}
       <section
         className="border-y border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50"
-        aria-label="Why trust Docera"
+        aria-label="Why trust Dockera"
       >
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
           <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -184,7 +184,7 @@ export default function HomePage() {
         <FaqAccordion
           faqs={faqs}
           heading="Frequently asked questions"
-          subheading="Quick answers about Docera and our tools."
+          subheading="Quick answers about Dockera and our tools."
         >
           Need to resize for a specific form? See our guides on{" "}
           <Link href="/resize-image-for-ssc-form" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">

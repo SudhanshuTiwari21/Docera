@@ -1,4 +1,4 @@
-# Docera SEO Strategy: Keyword Reinforcement
+# Dockera SEO Strategy: Keyword Reinforcement
 
 Use this doc with Google Search Console data to turn rankings and impressions into a structured optimization workflow.
 
@@ -125,4 +125,4 @@ Keep a running list (e.g. in this file or a spreadsheet) so you can re-check pos
 | Which URL to edit | Performance → click a query or URL | See “Pages” and “Queries” for that URL |
 | After editing | Same reports, 2–4 weeks later | Compare position and CTR before/after |
 
-Use this together with Docera’s internal linking (`lib/internalLinks.ts`) and title helper (`lib/titleOptimizer.ts`) for a consistent, data-driven workflow.
+Use this together with Dockera’s internal linking (`lib/internalLinks.ts`) and title helper (`lib/titleOptimizer.ts`) for a consistent, data-driven workflow.
