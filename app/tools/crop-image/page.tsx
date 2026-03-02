@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getDefaultMetadata, buildCanonicalUrl } from "@/lib/seo";
 import { Crop } from "lucide-react";
+import { CropImageTool } from "@/components/tools/CropImageTool";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
@@ -97,15 +98,8 @@ export default function CropImagePage() {
         </p>
       </header>
 
-      <div className="mb-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 px-8 py-12 text-center">
-        <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">Coming soon</p>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          This tool is under development. Meanwhile try our{" "}
-          <Link href="/tools/resize-image-to-100kb" className="font-medium text-slate-900 underline dark:text-slate-100">
-            resize image to 100KB
-          </Link>{" "}
-          or <Link href="/tools/compress-image" className="font-medium text-slate-900 underline dark:text-slate-100">compress image</Link> tools.
-        </p>
+      <div className="mb-14">
+        <CropImageTool />
       </div>
 
       <section className="mb-12" aria-labelledby="why-crop-heading">
