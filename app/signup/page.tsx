@@ -44,7 +44,7 @@ export default function SignupPage() {
             We sent a verification link to <strong>{email}</strong>. Click the link to verify your account.
           </p>
           <p className="mt-4 text-sm text-slate-500 dark:text-slate-500">
-            Didn&apos;t receive it? Check spam or{" "}
+            Didn't receive it? Check spam or{" "}
             <button
               type="button"
               onClick={() => setStatus("idle")}
@@ -71,7 +71,7 @@ export default function SignupPage() {
           Create your account
         </h1>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          We&apos;ll send a verification link to your email. No password needed.
+          We'll send a verification link to your email. No password needed.
         </p>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
