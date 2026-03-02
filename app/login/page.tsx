@@ -82,7 +82,7 @@ function LoginForm() {
         </h1>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
           {step === "email"
-            ? "We'll send a one-time code to your email. No password needed."
+            ? "We\u2019ll send a one-time code to your email. No password needed."
             : `We sent a 6-digit code to ${email}.`}
         </p>
 
@@ -157,7 +157,7 @@ function LoginForm() {
         )}
 
         <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/signup" className="font-medium text-slate-900 dark:text-slate-200">
             Sign up
           </Link>

@@ -101,7 +101,7 @@ export default function PricingPage() {
           <div className="mt-4 flex items-baseline gap-1">
             <span className="text-4xl font-bold text-slate-900 dark:text-slate-100">25+</span>
           </div>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Let's talk</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Let&apos;s talk</p>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
             Scalable solutions for your business with customized pricing.
           </p>
