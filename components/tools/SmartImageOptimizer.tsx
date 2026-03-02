@@ -194,9 +194,9 @@ export function SmartImageOptimizer({
   }, [result, file]);
 
   const modes: { id: SmartImageOptimizerMode; label: string; icon: React.ReactNode; recommended?: boolean }[] = [
-    { id: "resize", label: "Resize", icon: <Maximize2 className="h-4 w-4" aria-hidden /> },
-    { id: "compress", label: "Compress", icon: <Zap className="h-4 w-4" aria-hidden /> },
-    { id: "smart", label: "Smart Optimize", icon: <Sparkles className="h-4 w-4" aria-hidden />, recommended: true },
+    { id: "resize", label: "Resize (Dimensions)", icon: <Maximize2 className="h-4 w-4" aria-hidden /> },
+    { id: "compress", label: "Compress (Quality)", icon: <Zap className="h-4 w-4" aria-hidden /> },
+    { id: "smart", label: "Smart Optimize (Exact KB)", icon: <Sparkles className="h-4 w-4" aria-hidden />, recommended: true },
   ];
 
   return (
@@ -379,7 +379,11 @@ export function SmartImageOptimizer({
           disabled={!file || isProcessing}
           className="mt-4 w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
         >
-          {isProcessing ? "Optimizing…" : `Optimize Image`}
+          {isProcessing
+            ? "Optimizing…"
+            : mode === "smart"
+              ? `Optimize to ${targetKb}KB`
+              : "Optimize Image"}
         </button>
       </div>
 

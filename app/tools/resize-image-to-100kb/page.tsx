@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   ...getDefaultMetadata({
     title: buildOptimizedTitle("Resize Image to 100KB Online", { intent: "govt" }),
     description:
-      "Resize image to 100KB, 50KB or 20KB online for forms, applications and uploads—SSC, UPSC, railway, jobs, college and more. Free image size reducer—no sign-up, processing in your browser.",
+      "Resize and compress images to 100KB, 50KB or 20KB online for forms and applications. Smart optimization keeps quality high while reducing file size. Works for SSC, UPSC, railway and job uploads — no sign-up required.",
     keywords: [
       "resize image to 100kb",
       "image resize for govt forms",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     url: canonicalUrl,
     title: buildOptimizedTitle("Resize Image to 100KB Online", { intent: "govt" }),
     description:
-      "Resize image to 100KB, 50KB or 20KB online for forms, applications and uploads—SSC, UPSC, railway, jobs, college and more. Free image size reducer—no sign-up, processing in your browser.",
+      "Resize and compress images to 100KB, 50KB or 20KB online for forms and applications. Smart optimization keeps quality high while reducing file size. Works for SSC, UPSC, railway and job uploads — no sign-up required.",
     siteName: "Dockera",
     locale: "en_IN",
     type: "website",
@@ -147,10 +147,11 @@ export default function ResizeImageTo100kbPage() {
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
           Resize Image to 100KB Online for Govt Forms
         </h1>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+          Automatically adjusts image quality and dimensions to reach the exact file size limit.
+        </p>
         <p className="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-          Resize image to 100KB, 50KB or 20KB online for forms, applications and
-          uploads—SSC, UPSC, railway, jobs, college and more. Free image size
-          reducer—no sign-up, processing in your browser.
+          Resize and compress images to exact file size limits (100KB, 50KB or 20KB) required by government and exam forms.
         </p>
       </header>
 
@@ -158,10 +159,33 @@ export default function ResizeImageTo100kbPage() {
         <SmartImageOptimizer
           defaultMode="smart"
           defaultTargetKb={100}
-          seoDescription="Resize image to 100KB, 50KB or 20KB for government forms."
+          seoDescription="Resize and compress images to exact file size limits (100KB, 50KB or 20KB) required by government and exam forms."
           heading="Resize image to 100KB"
         />
       </div>
+
+      <section
+        className="mb-12 rounded-xl border border-slate-200 bg-slate-50 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800/50"
+        aria-labelledby="how-it-works-heading"
+      >
+        <h3 id="how-it-works-heading" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          How Dockera optimizes your image
+        </h3>
+        <ol className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+          <li className="flex gap-2">
+            <span className="font-medium text-slate-700 dark:text-slate-300">1.</span>
+            Adjusts image quality intelligently
+          </li>
+          <li className="flex gap-2">
+            <span className="font-medium text-slate-700 dark:text-slate-300">2.</span>
+            Resizes dimensions only if needed
+          </li>
+          <li className="flex gap-2">
+            <span className="font-medium text-slate-700 dark:text-slate-300">3.</span>
+            Stops exactly at your selected file size
+          </li>
+        </ol>
+      </section>
 
       <section
         className="mb-12"
