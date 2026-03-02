@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getDefaultMetadata, buildCanonicalUrl } from "@/lib/seo";
+import { SmartImageOptimizer } from "@/components/tools/SmartImageOptimizer";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
@@ -17,6 +18,11 @@ export const metadata: Metadata = {
       "railway exam photo limit",
       "RRB photo size",
       "RRC application photo",
+      "railway alp photo size 2026",
+      "rrb ntpc signature size",
+      "railway form 30kb photo",
+      "railway photo not accepted",
+      "rrb photo size in kb",
     ],
     path,
   }),
@@ -61,6 +67,30 @@ const faqSchema = {
         text: "Most railway forms accept JPEG. Our resize tools output JPEG optimized for the size limit. Ensure your photo meets dimension requirements (usually passport-style) and has a light/neutral background as specified in the notification.",
       },
     },
+    {
+      "@type": "Question",
+      name: "What is railway ALP photo size for 2026?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Railway ALP (Assistant Loco Pilot) notification typically specifies 20KB to 100KB for the candidate photo. Check the RRB notification for the exact limit. Use this tool to resize to 20KB, 50KB, or 100KB as required.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is RRB NTPC signature size?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "RRB NTPC and other railway forms often require signature images within 20KB to 50KB. Resize your signature image to the specified limit. Use JPEG format and ensure a white or light background for best results.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Railway photo not accepted—what to do?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "If the form rejects your photo: resize to slightly under the limit (e.g. 28KB when 30KB), use JPEG format, ensure correct dimensions if specified, and check for a light/neutral background. Use our resize tool and passport photo tool for correct formatting.",
+      },
+    },
   ],
 };
 
@@ -93,12 +123,21 @@ export default function RailwayPhotoSizeLimitPage() {
 
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-          Railway Exam Photo Size Limit
+          Railway Exam Photo Size Limit – RRB, ALP, NTPC
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-          Railway recruitment forms (RRB, RRC) often require a recent photograph within a specific file size—usually 20KB to 100KB. Resize your photo to the exact limit to avoid upload errors.
+          Railway recruitment forms (RRB, RRC) often require a recent photograph within a specific file size—usually 20KB to 100KB, sometimes 30KB. Resize your photo to the exact limit for ALP, NTPC, Group D, and other railway exams to avoid upload errors.
         </p>
       </header>
+
+      <div className="mb-14">
+        <SmartImageOptimizer
+          defaultMode="smart"
+          defaultTargetKb={50}
+          seoDescription="Resize image to 20KB, 50KB or 100KB for railway application."
+          heading="Resize image for railway form"
+        />
+      </div>
 
       <section className="mb-12" aria-labelledby="requirements-heading">
         <h2 id="requirements-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
@@ -114,8 +153,29 @@ export default function RailwayPhotoSizeLimitPage() {
           How to resize
         </h2>
         <p className="mt-4 text-slate-600 dark:text-slate-400">
-          Upload your photo, select the target size (20KB, 50KB, or 100KB), and download. Processing happens in your browser—your photo is never uploaded to our servers. For related exam photo guides, see <Link href="/resize-image-for-ssc-form" className="font-medium text-slate-900 underline dark:text-slate-100">SSC</Link> and <Link href="/resize-image-for-upsc-form" className="font-medium text-slate-900 underline dark:text-slate-100">UPSC</Link>.
+          Upload your photo, select the target size (20KB, 30KB, 50KB, or 100KB), and download. Processing happens in your browser—your photo is never uploaded to our servers. For related exam photo guides, see <Link href="/resize-image-for-ssc-form" className="font-medium text-slate-900 underline dark:text-slate-100">SSC</Link> and <Link href="/resize-image-for-upsc-form" className="font-medium text-slate-900 underline dark:text-slate-100">UPSC</Link>.
         </p>
+      </section>
+
+      <section className="mb-12" aria-labelledby="railway-exams-heading">
+        <h2 id="railway-exams-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Railway ALP, RRB NTPC, Group D photo size in KB
+        </h2>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          Railway recruitment boards (RRB) specify photo size in KB—often 20KB to 100KB. Railway ALP 2026, RRB NTPC, Group D, and RRC notifications may differ slightly; always check the official advertisement. Some forms require 30KB for photo or signature. Use the tool above to resize to the exact limit. If your railway photo is not accepted, ensure you&apos;re within the size limit, using JPEG, and meeting dimension requirements. For passport-style framing, use our <Link href="/tools/passport-photo" className="font-medium text-slate-900 underline dark:text-slate-100">passport photo tool</Link>. For document size limits, see <Link href="/tools/resize-image-to-100kb" className="font-medium text-slate-900 underline dark:text-slate-100">resize to 100KB</Link>.
+        </p>
+      </section>
+
+      <section className="mb-12" aria-labelledby="railway-errors-heading">
+        <h2 id="railway-errors-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Railway form photo not accepted—common fixes
+        </h2>
+        <ul className="mt-4 space-y-2 text-slate-600 dark:text-slate-400">
+          <li><strong className="text-slate-800 dark:text-slate-200">Size over limit:</strong> Resize to 95% of the limit (e.g. 28KB when 30KB).</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">Wrong format:</strong> Use JPEG. Our tool outputs JPEG.</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">Dimensions:</strong> Some forms require specific pixel dimensions. Use our <Link href="/tools/passport-photo" className="font-medium text-slate-900 underline dark:text-slate-100">passport photo tool</Link> first.</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">Background:</strong> Use a light or white background as per notification.</li>
+        </ul>
       </section>
 
       <FaqAccordion

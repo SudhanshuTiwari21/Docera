@@ -58,14 +58,19 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
-export function CropImageTool() {
+export type CropImageToolProps = {
+  defaultAspect?: number;
+  defaultOutputFormat?: "jpeg" | "png";
+};
+
+export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: CropImageToolProps = {}) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropArea | undefined>(undefined);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
-  const [aspect, setAspect] = useState<number | undefined>(undefined);
-  const [outputFormat, setOutputFormat] = useState<"jpeg" | "png">("jpeg");
+  const [aspect, setAspect] = useState<number | undefined>(defaultAspect);
+  const [outputFormat, setOutputFormat] = useState<"jpeg" | "png">(defaultOutputFormat);
   const [quality, setQuality] = useState(0.92);
   const [result, setResult] = useState<{ blob: Blob; url: string } | null>(null);
   const [error, setError] = useState<string | null>(null);

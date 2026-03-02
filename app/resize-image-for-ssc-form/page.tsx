@@ -20,6 +20,12 @@ export const metadata: Metadata = {
       "SSC application photo 50kb",
       "compress photo for SSC",
       "SSC CGL photo size",
+      "resize image to 20kb for ssc chsl",
+      "ssc chsl photo size 2026",
+      "ssc signature size in kb",
+      "ssc form photo not uploading",
+      "ssc photo size in pixels",
+      "reduce image to 50kb for ssc",
     ],
     path,
   }),
@@ -86,6 +92,22 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "Yes. The tool works for any form with a KB limit. For UPSC-specific guidance, see our resize image for UPSC form page. For railway, see our railway photo size limit guide. The same resize logic applies across exams.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is SSC signature size in KB?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "SSC notifications often specify signature file size—typically 20KB to 50KB. Use this tool to resize your signature image to the exact limit. Our signature extractor tool can help isolate a clean signature from a document before resizing.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why is my SSC form photo not uploading?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Common causes: file size over limit (resize to 95KB when limit is 100KB), wrong format (use JPEG), or wrong dimensions. Resize using this tool and ensure you upload the processed file. For dimension issues, use our passport photo tool first.",
       },
     },
   ],
@@ -186,6 +208,15 @@ export default function ResizeImageForSscFormPage() {
           <li><strong className="text-slate-800 dark:text-slate-200">&quot;Dimensions not as per specification&quot;</strong> — Some forms require specific dimensions. Use our <Link href="/tools/passport-photo" className="font-medium text-slate-900 underline dark:text-slate-100">passport photo tool</Link> for correct framing, then resize here for file size.</li>
           <li><strong className="text-slate-800 dark:text-slate-200">Quality looks poor</strong> — For strict limits like 20KB, quality may drop. Use a well-lit, sharp source photo. If the notification allows 50KB or 100KB, prefer that for better clarity.</li>
         </ul>
+      </section>
+
+      <section className="mb-12" aria-labelledby="ssc-chsl-2026-heading">
+        <h2 id="ssc-chsl-2026-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          SSC CHSL, CGL, MTS photo size 2026
+        </h2>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          SSC CHSL, CGL, MTS, and other Staff Selection Commission exams typically require photos between 20KB and 100KB. The 2026 notifications may specify 50KB or 100KB—always check the official advertisement. Photo size in pixels varies; what matters for upload is the file size (KB). Use this tool to reduce your image to 20KB, 50KB, or 100KB as required. For signature uploads, SSC often allows 20KB–50KB—resize accordingly.
+        </p>
       </section>
 
       <section className="mb-12" aria-labelledby="tips-heading">

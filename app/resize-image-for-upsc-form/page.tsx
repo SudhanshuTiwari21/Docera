@@ -19,6 +19,10 @@ export const metadata: Metadata = {
       "UPSC application photo 50kb",
       "compress photo for UPSC",
       "UPSC CSE photo size",
+      "upsc photo size in pixels",
+      "upsc signature size in kb",
+      "upsc form image upload error",
+      "upsc application photo not uploading",
     ],
     path,
   }),
@@ -61,6 +65,30 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "Yes. All processing happens in your browser. Your photo is never uploaded to any server. Safe for UPSC application photos and other official documents.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is UPSC photo size in pixels?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "UPSC usually specifies file size (KB), not pixels. What matters for upload is the KB limit. If dimensions are specified, use our passport photo tool for correct framing, then resize here for file size. Most forms accept standard passport-style dimensions.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is UPSC signature size in KB?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "UPSC notifications often require signature images within 20KB to 50KB. Use this tool to resize your signature to the specified limit. Ensure white or light background and black ink for best results.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "UPSC form image upload error—how to fix?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "If upload fails: resize to slightly under the limit (e.g. 95KB when 100KB), use JPEG format, ensure correct dimensions if specified, and upload the processed file—not the original. Try a different browser if the portal is slow.",
       },
     },
   ],
@@ -113,6 +141,27 @@ export default function ResizeImageForUpscFormPage() {
         <p className="mt-4 text-slate-600 dark:text-slate-400">
           Union Public Service Commission (UPSC) applications—including Civil Services (CSE), CAPF, and other exams—require a recent photograph of the candidate. The notification specifies a maximum file size for the photo, often between 20KB and 100KB. Uploading a larger file can lead to rejection or technical errors. Resizing your image to the exact limit ensures a smooth application process. This tool lets you choose 20KB, 50KB, or 100KB (or a custom size) to match the UPSC requirement. All processing is done in your browser; your photo is never uploaded to any server. For the correct passport-style dimensions and background, use our <Link href="/tools/passport-photo" className="font-medium text-slate-900 underline dark:text-slate-100">passport photo tool</Link>. For other sizes, use <Link href="/tools/resize-image-to-100kb" className="font-medium text-slate-900 underline dark:text-slate-100">resize to 100KB</Link>, and for document size limits the <Link href="/tools/pdf-compressor" className="font-medium text-slate-900 underline dark:text-slate-100">PDF compressor</Link>.
         </p>
+      </section>
+
+      <section className="mb-12" aria-labelledby="upsc-pixels-signature-heading">
+        <h2 id="upsc-pixels-signature-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          UPSC photo size in pixels and signature in KB
+        </h2>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          UPSC typically specifies file size (KB) rather than exact pixels. What matters for upload is staying under the KB limit. If the notification mentions dimensions (e.g. 3.5 cm × 4.5 cm), use our <Link href="/tools/passport-photo" className="font-medium text-slate-900 underline dark:text-slate-100">passport photo tool</Link> first, then resize here for file size. For signature uploads, UPSC usually allows 20KB to 50KB—resize your signature image accordingly. If you see an UPSC form image upload error or photo not uploading, resize to slightly under the limit and ensure JPEG format. See our <Link href="/fix-government-form-photo-upload-error" className="font-medium text-slate-900 underline dark:text-slate-100">fix government form photo upload error</Link> guide for more troubleshooting.
+        </p>
+      </section>
+
+      <section className="mb-12" aria-labelledby="upsc-errors-heading">
+        <h2 id="upsc-errors-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Common UPSC form upload errors and fixes
+        </h2>
+        <ul className="mt-4 space-y-2 text-slate-600 dark:text-slate-400">
+          <li><strong className="text-slate-800 dark:text-slate-200">&quot;File size exceeds limit&quot;</strong> — Resize to 95KB when limit is 100KB.</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">&quot;Invalid format&quot;</strong> — Use JPEG. Our tool outputs JPEG.</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">&quot;Photo dimension mismatch&quot;</strong> — Use passport photo tool for correct framing.</li>
+          <li><strong className="text-slate-800 dark:text-slate-200">Upload timeout or fails</strong> — Use a smaller file (e.g. 50KB), try a different browser, check internet connection.</li>
+        </ul>
       </section>
 
       <FaqAccordion

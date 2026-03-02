@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getDefaultMetadata, buildCanonicalUrl } from "@/lib/seo";
 import { FileText } from "lucide-react";
+import { JpgToPdfTool } from "@/components/tools/JpgToPdfTool";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
@@ -97,13 +98,8 @@ export default function JpgToPdfPage() {
         </p>
       </header>
 
-      <div className="mb-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 px-8 py-12 text-center">
-        <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">Coming soon</p>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          This tool is under development. Try our{" "}
-          <Link href="/tools/image-to-pdf" className="font-medium text-slate-900 underline dark:text-slate-100">image to PDF</Link>{" "}
-          or <Link href="/tools/compress-image" className="font-medium text-slate-900 underline dark:text-slate-100">compress image</Link> meanwhile.
-        </p>
+      <div className="mb-14">
+        <JpgToPdfTool />
       </div>
 
       <section className="mb-12" aria-labelledby="use-cases-heading">

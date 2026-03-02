@@ -10,9 +10,9 @@ const canonicalUrl = buildCanonicalUrl(path);
 
 export const metadata: Metadata = {
   ...getDefaultMetadata({
-    title: "Smart Image Optimizer – Resize, Compress, Auto-Size | Dockera",
+    title: "Exam Smart Resizer – SSC, UPSC, Railway, IBPS Photo Size | Dockera",
     description:
-      "Resize by dimensions, compress by quality, or auto-optimize to target file size. Free, private, no sign-up. Works entirely in your browser.",
+      "Resize photos for Indian exams in one click. SSC CGL, UPSC CSE, Railway RRB, IBPS—select your exam, auto-set dimensions and KB. Free, private, works in your browser.",
     keywords: [
       "image optimizer",
       "resize image online",
@@ -76,7 +76,7 @@ const faqSchema = {
       name: "Which mode should I use for SSC or UPSC form photos?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Use Smart Optimize. Set the target to 100KB, 50KB, or 20KB as per the form notification. The tool will compress and resize as needed to reach that exact size. Our dedicated resize to 100KB page offers the same for government form uploads.",
+        text: "Use the Indian Exams tab. Select your exam (SSC CGL, UPSC CSE, Railway ALP, IBPS PO, etc.) and the tool auto-sets dimensions and file size. One click optimizes your photo for the exact requirements. Also supports Smart Optimize for custom KB targets.",
       },
     },
     {
@@ -112,33 +112,42 @@ export default function ImageResizerPage() {
           </li>
           <li aria-hidden="true">/</li>
           <li className="text-slate-900 dark:text-slate-100">
-            Smart Image Optimizer
+            Exam Smart Resizer
           </li>
         </ol>
       </nav>
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-          Smart Image Optimizer
+          Exam Smart Resizer
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-          Resize by dimensions, compress by quality, or auto-optimize to a target file size. Free, private, no sign-up. Works entirely in your browser.
+          One-click resize for Indian exams. Select SSC CGL, UPSC CSE, Railway, IBPS—auto-set dimensions and KB. Or use Smart Optimize, Resize, or Compress for custom needs. Free, private, works in your browser.
         </p>
       </header>
       <div className="mb-14">
         <SmartImageOptimizer
-          defaultMode="smart"
+          defaultMode="exam"
           defaultTargetKb={100}
-          seoDescription="Choose Resize for dimensions, Compress for quality, or Smart Optimize for automatic target file size."
-          heading="Smart Image Optimizer"
+          seoDescription="Select your exam preset for auto dimensions and KB, or use Smart Optimize for custom targets."
+          heading="Exam Smart Resizer"
         />
       </div>
 
-      <section className="mb-12" aria-labelledby="problem-context-heading">
-        <h2 id="problem-context-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          The problem: one tool, many needs
+      <section className="mb-12" aria-labelledby="exam-smart-heading">
+        <h2 id="exam-smart-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Indian Exams: one click, done
         </h2>
         <p className="mt-4 text-slate-600 dark:text-slate-400">
-          Sometimes you need smaller dimensions. Sometimes you need smaller file size. Sometimes you need an exact KB for a form. Installing different software for each is overkill. The Smart Image Optimizer gives you three modes in one: Resize (change width and height), Compress (change quality), and Smart Optimize (hit an exact file size like 100KB). All processing runs in your browser—no uploads, no sign-up, no limits.
+          Select your exam from the dropdown—SSC CGL, SSC CHSL, RRB ALP, UPSC CSE, IBPS PO, SBI PO, and more. The tool auto-sets pixel dimensions (275×354 passport style), target KB (50KB for photo, 20KB for signature), and JPEG format. Upload, optimize, download. No manual settings needed. Always verify against the official notification—requirements can change by year.
+        </p>
+      </section>
+
+      <section className="mb-12" aria-labelledby="problem-context-heading">
+        <h2 id="problem-context-heading" className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          All modes in one tool
+        </h2>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          Indian Exams for presets. Smart Optimize for exact KB. Resize for custom dimensions. Compress for quality control. All processing runs in your browser—no uploads, no sign-up, no limits.
         </p>
       </section>
 
@@ -147,7 +156,10 @@ export default function ImageResizerPage() {
           Step-by-step: how to use each mode
         </h2>
         <p className="mt-4 text-slate-600 dark:text-slate-400">
-          <strong className="text-slate-800 dark:text-slate-200">Resize:</strong> Upload your image, enter target width and height (or use aspect ratio lock), and optimize. Use when you need specific dimensions—e.g. profile pictures, thumbnails.
+          <strong className="text-slate-800 dark:text-slate-200">Indian Exams:</strong> Select your exam (SSC CGL, UPSC CSE, Railway, IBPS, etc.), upload, and optimize. Dimensions and KB are set automatically. Use for photo or signature uploads.
+        </p>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          <strong className="text-slate-800 dark:text-slate-200">Resize:</strong> Enter target width and height (or use aspect ratio lock). Use when you need specific dimensions—profile pictures, thumbnails.
         </p>
         <p className="mt-4 text-slate-600 dark:text-slate-400">
           <strong className="text-slate-800 dark:text-slate-200">Compress:</strong> Upload, adjust the quality slider (higher = better quality, larger file), and optimize. Use when you want smaller files without a strict KB target—email, web, storage.

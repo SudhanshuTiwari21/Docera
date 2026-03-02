@@ -23,6 +23,8 @@ export const examPhotoGuidesLinks: InternalLink[] = [
   { href: "/resize-image-for-ssc-form", label: "SSC photo size requirements" },
   { href: "/resize-image-for-upsc-form", label: "UPSC photo size requirements" },
   { href: "/railway-photo-size-limit", label: "Railway exam photo size limit" },
+  { href: "/fix-government-form-photo-upload-error", label: "Fix government form photo upload error" },
+  { href: "/bihar-psc-photo-size", label: "Bihar PSC photo size" },
 ];
 
 /** Image tools – for image-related tool pages */

@@ -163,3 +163,66 @@ export async function smartOptimizeImage(file: File, targetKb: number): Promise<
     reductionPercent,
   };
 }
+
+export type ExamOptimizeOptions = {
+  width: number;
+  height: number;
+  targetKb: number;
+};
+
+/**
+ * Exam preset mode: resize to fit within dimensions, then compress to target KB.
+ * Produces JPEG suitable for Indian exam forms.
+ */
+export async function examOptimizeImage(file: File, options: ExamOptimizeOptions): Promise<SmartOptimizeResult> {
+  const img = await loadImage(file);
+  const srcW = img.naturalWidth;
+  const srcH = img.naturalHeight;
+
+  // Fit within preset dimensions (maintain aspect)
+  const ratio = Math.min(options.width / srcW, options.height / srcH);
+  const outW = Math.round(srcW * ratio);
+  const outH = Math.round(srcH * ratio);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = outW;
+  canvas.height = outH;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas not supported");
+
+  ctx.drawImage(img, 0, 0, outW, outH);
+
+  const targetBytes = Math.max(1024, options.targetKb * 1024);
+  let quality = 0.9;
+  let blob: Blob | null = null;
+
+  while (quality >= MIN_QUALITY) {
+    blob = await canvasToBlob(canvas, quality);
+    if (blob && blob.size <= targetBytes) {
+      const reductionPercent = file.size > 0
+        ? Math.round(((file.size - blob.size) / file.size) * 100)
+        : 0;
+      return {
+        blob,
+        finalWidth: outW,
+        finalHeight: outH,
+        qualityUsed: quality,
+        reductionPercent,
+      };
+    }
+    quality -= QUALITY_STEP;
+  }
+
+  blob = await canvasToBlob(canvas, MIN_QUALITY);
+  if (!blob) throw new Error("Failed to create image blob");
+  const reductionPercent = file.size > 0
+    ? Math.round(((file.size - blob.size) / file.size) * 100)
+    : 0;
+  return {
+    blob,
+    finalWidth: outW,
+    finalHeight: outH,
+    qualityUsed: MIN_QUALITY,
+    reductionPercent,
+  };
+}

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { getDefaultMetadata, buildCanonicalUrl } from "@/lib/seo";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
+
+const PdfCompressorTool = dynamic(() => import("@/components/tools/PdfCompressorTool").then((m) => ({ default: m.PdfCompressorTool })), { ssr: false });
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
 const path = "/tools/pdf-compressor";
@@ -98,15 +101,8 @@ export default function PdfCompressorPage() {
         </p>
       </header>
 
-      <div className="mb-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 px-8 py-12 text-center">
-        <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">Coming soon</p>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          Tool interface under development. Meanwhile, try our{" "}
-          <Link href="/tools/resize-image-to-100kb" className="font-medium text-slate-900 underline dark:text-slate-100">
-            resize image to 100KB
-          </Link>{" "}
-          for photo size limits.
-        </p>
+      <div className="mb-14">
+        <PdfCompressorTool />
       </div>
 
       <section className="mb-12" aria-labelledby="why-compress-pdf-heading">

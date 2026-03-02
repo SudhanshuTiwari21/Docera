@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getDefaultMetadata, buildCanonicalUrl } from "@/lib/seo";
 import { Scissors } from "lucide-react";
+import { SplitPdfTool } from "@/components/tools/SplitPdfTool";
 import { RelatedToolsLinks } from "@/components/RelatedToolsLinks";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
@@ -97,13 +98,8 @@ export default function SplitPdfPage() {
         </p>
       </header>
 
-      <div className="mb-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 px-8 py-12 text-center">
-        <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">Coming soon</p>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          This tool is under development. Meanwhile try our{" "}
-          <Link href="/tools/pdf-compressor" className="font-medium text-slate-900 underline dark:text-slate-100">PDF compressor</Link>{" "}
-          or <Link href="/tools/merge-pdf" className="font-medium text-slate-900 underline dark:text-slate-100">merge PDF</Link>.
-        </p>
+      <div className="mb-14">
+        <SplitPdfTool />
       </div>
 
       <section className="mb-12" aria-labelledby="why-split-heading">

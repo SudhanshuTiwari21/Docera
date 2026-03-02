@@ -5,16 +5,18 @@ import {
   resizeImage,
   compressImage,
   smartOptimizeImage,
+  examOptimizeImage,
   type SmartOptimizeResult,
 } from "@/lib/imageOptimizer";
+import { EXAM_PRESETS, CUSTOM_PRESET } from "@/lib/examPresets";
 import { checkAndUpdateDailyUsage } from "@/lib/usageLimit";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
-import { Upload, Maximize2, Zap, Sparkles } from "lucide-react";
+import { Upload, Maximize2, Zap, Sparkles, GraduationCap } from "lucide-react";
 
 const TOOL_ID = "smart-image-optimizer";
 const DAILY_LIMIT = 5;
 
-export type SmartImageOptimizerMode = "resize" | "compress" | "smart";
+export type SmartImageOptimizerMode = "resize" | "compress" | "smart" | "exam";
 
 export type SmartImageOptimizerProps = {
   defaultMode?: SmartImageOptimizerMode;
@@ -56,6 +58,10 @@ export function SmartImageOptimizer({
 
   // Smart mode
   const [targetKb, setTargetKb] = useState(defaultTargetKb);
+
+  // Exam mode
+  const [examPresetId, setExamPresetId] = useState<string>("");
+  const [examIsSignature, setExamIsSignature] = useState(false);
 
   // Usage limits
   const [usage, setUsage] = useState({ allowed: true, count: 0, limit: DAILY_LIMIT });
@@ -149,6 +155,16 @@ export function SmartImageOptimizer({
         });
       } else if (mode === "compress") {
         blob = await compressImage(file, { quality });
+      } else if (mode === "exam") {
+        const preset = EXAM_PRESETS.find((p) => p.id === examPresetId) ?? CUSTOM_PRESET;
+        const kb = examIsSignature && preset.signatureKb ? preset.signatureKb : preset.targetKb;
+        const res = await examOptimizeImage(file, {
+          width: preset.width,
+          height: preset.height,
+          targetKb: kb,
+        });
+        blob = res.blob;
+        smartMeta = res;
       } else {
         const res = await smartOptimizeImage(file, targetKb);
         blob = res.blob;
@@ -177,6 +193,8 @@ export function SmartImageOptimizer({
     maintainAspect,
     quality,
     targetKb,
+    examPresetId,
+    examIsSignature,
     isPremiumUser,
     usage.allowed,
     userId,
@@ -194,10 +212,13 @@ export function SmartImageOptimizer({
   }, [result, file]);
 
   const modes: { id: SmartImageOptimizerMode; label: string; icon: React.ReactNode; recommended?: boolean }[] = [
+    { id: "exam", label: "Indian Exams", icon: <GraduationCap className="h-4 w-4" aria-hidden />, recommended: true },
+    { id: "smart", label: "Smart Optimize (Exact KB)", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
     { id: "resize", label: "Resize (Dimensions)", icon: <Maximize2 className="h-4 w-4" aria-hidden /> },
     { id: "compress", label: "Compress (Quality)", icon: <Zap className="h-4 w-4" aria-hidden /> },
-    { id: "smart", label: "Smart Optimize (Exact KB)", icon: <Sparkles className="h-4 w-4" aria-hidden />, recommended: true },
   ];
+
+  const selectedExamPreset = EXAM_PRESETS.find((p) => p.id === examPresetId) ?? CUSTOM_PRESET;
 
   return (
     <section
@@ -353,6 +374,71 @@ export function SmartImageOptimizer({
           </div>
         )}
 
+        {mode === "exam" && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-slate-900">Exam preset</h3>
+            <div>
+              <label htmlFor="exam-preset" className="mb-1 block text-sm text-slate-600">
+                Select exam
+              </label>
+              <select
+                id="exam-preset"
+                value={examPresetId || "custom"}
+                onChange={(e) => setExamPresetId(e.target.value === "custom" ? "" : e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              >
+                <option value="custom">{CUSTOM_PRESET.label}</option>
+                <optgroup label="SSC">
+                  {EXAM_PRESETS.filter((p) => p.id.startsWith("ssc-")).map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Railway (RRB)">
+                  {EXAM_PRESETS.filter((p) => p.id.startsWith("rrb-")).map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="UPSC">
+                  {EXAM_PRESETS.filter((p) => p.id.startsWith("upsc-")).map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Banking">
+                  {EXAM_PRESETS.filter((p) => p.id.startsWith("ibps-") || p.id.startsWith("sbi-") || p.id.startsWith("rbi-")).map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Defence & State PSC">
+                  {EXAM_PRESETS.filter((p) => ["cds-", "nda-", "uppsc-", "bpsc-", "mppsc-", "rpsc-", "ctet-"].some((pre) => p.id.startsWith(pre))).map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+            {examPresetId && selectedExamPreset.id !== "custom" && (
+              <>
+                <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                  <span className="font-medium">Photo:</span> {selectedExamPreset.width}×{selectedExamPreset.height} px · {selectedExamPreset.targetKb} KB · JPEG
+                  {selectedExamPreset.signatureKb && (
+                    <> · <span className="font-medium">Signature:</span> {selectedExamPreset.signatureKb} KB</>
+                  )}
+                </div>
+                {selectedExamPreset.signatureKb && (
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={examIsSignature}
+                      onChange={(e) => setExamIsSignature(e.target.checked)}
+                      className="rounded border-slate-300"
+                    />
+                    <span className="text-sm text-slate-600">Resize for signature ({selectedExamPreset.signatureKb} KB)</span>
+                  </label>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
         {mode === "smart" && (
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-slate-900">Target file size</h3>
@@ -376,14 +462,18 @@ export function SmartImageOptimizer({
         <button
           type="button"
           onClick={runOptimization}
-          disabled={!file || isProcessing}
+          disabled={!file || isProcessing || (mode === "exam" && !examPresetId)}
           className="mt-4 w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
         >
           {isProcessing
             ? "Optimizing…"
-            : mode === "smart"
-              ? `Optimize to ${targetKb}KB`
-              : "Optimize Image"}
+            : mode === "exam"
+              ? examPresetId
+                ? `Optimize for ${selectedExamPreset.label}`
+                : "Select an exam preset"
+              : mode === "smart"
+                ? `Optimize to ${targetKb}KB`
+                : "Optimize Image"}
         </button>
       </div>
 
