@@ -12,22 +12,16 @@ import { getCroppedCanvas } from "@/lib/cropImage";
 import { canvasToBlob } from "@/lib/cropImage";
 import { checkAndUpdateDailyUsage } from "@/lib/usageLimit";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
-import { Upload, Crop, Download } from "lucide-react";
+import { Upload, Crop, Download, Lock, LockOpen } from "lucide-react";
 
 const TOOL_ID = "crop-image";
 const DAILY_LIMIT = 10;
+const DPI_FOR_CM = 300;
 
-const ASPECT_PRESETS: { label: string; value: number | undefined }[] = [
-  { label: "Free", value: undefined },
-  { label: "1:1 (Square)", value: 1 },
-  { label: "4:3", value: 4 / 3 },
-  { label: "16:9", value: 16 / 9 },
-  { label: "3:2", value: 3 / 2 },
-  { label: "2:3", value: 2 / 3 },
-  { label: "9:16 (Story)", value: 9 / 16 },
-  { label: "4:5 (Instagram)", value: 4 / 5 },
-  { label: "35:45 (Passport)", value: 35 / 45 },
-];
+/** Convert pixels to cm at given DPI (25.4 mm = 1 inch). */
+function pxToCm(px: number, dpi: number): number {
+  return (px / dpi) * 2.54;
+}
 
 function centerAspectCrop(
   mediaWidth: number,
@@ -58,21 +52,63 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
+export type CropImageToolResult = {
+  blob: Blob;
+  url: string;
+  width: number;
+  height: number;
+};
+
 export type CropImageToolProps = {
   defaultAspect?: number;
   defaultOutputFormat?: "jpeg" | "png";
+  /** When true, only allow preset aspects (no free crop). */
+  aspectLocked?: boolean;
+  /** Override aspect ratio presets (e.g. passport 35:45, 1:1 only). */
+  aspectPresets?: { label: string; value: number }[];
+  /** Run after crop, before blob (e.g. background whiten, shadow reduction). */
+  postProcess?: (canvas: HTMLCanvasElement) => HTMLCanvasElement | Promise<HTMLCanvasElement>;
+  /** Resize output to exact dimensions after postProcess. */
+  outputSize?: { width: number; height: number };
+  /** Extra UI below result (e.g. print sheet download). */
+  renderResultExtras?: (result: CropImageToolResult) => React.ReactNode;
 };
 
-export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: CropImageToolProps = {}) {
+/** Exam-specific and common ratio presets. 3.5:4.5 = 35:45 for govt forms. */
+const DEFAULT_ASPECT_PRESETS: { label: string; value: number | undefined }[] = [
+  { label: "Free", value: undefined },
+  { label: "1:1 (Square)", value: 1 },
+  { label: "3.5:4.5 (Exam/Passport)", value: 35 / 45 },
+  { label: "4:3", value: 4 / 3 },
+  { label: "16:9", value: 16 / 9 },
+  { label: "3:2", value: 3 / 2 },
+  { label: "2:3", value: 2 / 3 },
+  { label: "9:16 (Story)", value: 9 / 16 },
+  { label: "4:5 (Instagram)", value: 4 / 5 },
+];
+
+export function CropImageTool({
+  defaultAspect,
+  defaultOutputFormat = "jpeg",
+  aspectLocked = false,
+  aspectPresets,
+  postProcess,
+  outputSize,
+  renderResultExtras,
+}: CropImageToolProps = {}) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropArea | undefined>(undefined);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
-  const [aspect, setAspect] = useState<number | undefined>(defaultAspect);
+  const presets = aspectPresets ?? DEFAULT_ASPECT_PRESETS;
+  const initialAspect = defaultAspect ?? (aspectLocked ? (aspectPresets?.[0]?.value ?? 35 / 45) : undefined);
+  const [aspect, setAspect] = useState<number | undefined>(initialAspect);
+  const [dimensionLock, setDimensionLock] = useState(!!aspectLocked);
+  const lockedByParent = !!aspectLocked;
   const [outputFormat, setOutputFormat] = useState<"jpeg" | "png">(defaultOutputFormat);
   const [quality, setQuality] = useState(0.92);
-  const [result, setResult] = useState<{ blob: Blob; url: string } | null>(null);
+  const [result, setResult] = useState<CropImageToolResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -149,6 +185,7 @@ export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: C
   const handleDragLeave = useCallback(() => setIsDragging(false), []);
 
   const handleAspectChange = useCallback((val: number | undefined) => {
+    if (dimensionLock && val === undefined) return;
     setAspect(val);
     if (imgRef.current && val !== undefined) {
       const { width, height } = imgRef.current;
@@ -156,7 +193,15 @@ export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: C
       setCrop(newCrop);
       setCompletedCrop(newCrop);
     }
-  }, []);
+  }, [dimensionLock]);
+
+  const cropDimensionsPx =
+    completedCrop && imgRef.current
+      ? {
+          w: Math.round(completedCrop.width * (imgRef.current.naturalWidth / imgRef.current.width)),
+          h: Math.round(completedCrop.height * (imgRef.current.naturalHeight / imgRef.current.height)),
+        }
+      : null;
 
   const runCrop = useCallback(async () => {
     if (!file || !completedCrop || !imgRef.current) {
@@ -174,21 +219,34 @@ export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: C
     setResult(null);
 
     try {
-      const canvas = await getCroppedCanvas(imgRef.current, completedCrop);
+      let canvas = await getCroppedCanvas(imgRef.current, completedCrop);
+      if (postProcess) {
+        canvas = await Promise.resolve(postProcess(canvas));
+      }
+      if (outputSize && outputSize.width > 0 && outputSize.height > 0) {
+        const resized = document.createElement("canvas");
+        resized.width = outputSize.width;
+        resized.height = outputSize.height;
+        const rctx = resized.getContext("2d");
+        if (rctx) {
+          rctx.drawImage(canvas, 0, 0, outputSize.width, outputSize.height);
+          canvas = resized;
+        }
+      }
       const mime = outputFormat === "jpeg" ? "image/jpeg" : "image/png";
       const q = outputFormat === "jpeg" ? quality : 1;
       const blob = await canvasToBlob(canvas, mime, q);
       if (!blob) throw new Error("Failed to create image blob");
 
       const url = URL.createObjectURL(blob);
-      setResult({ blob, url });
+      setResult({ blob, url, width: canvas.width, height: canvas.height });
       setUsage(checkAndUpdateDailyUsage(TOOL_ID, DAILY_LIMIT, true, userId));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Crop failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
-  }, [file, completedCrop, outputFormat, quality, result, isPremiumUser, usage.allowed, userId]);
+  }, [file, completedCrop, outputFormat, quality, result, isPremiumUser, usage.allowed, userId, postProcess, outputSize]);
 
   const handleDownload = useCallback(() => {
     if (!result) return;
@@ -266,27 +324,69 @@ export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: C
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">
-                Aspect ratio
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {ASPECT_PRESETS.map(({ label, value }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => handleAspectChange(value)}
-                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                      aspect === value
-                        ? "bg-slate-900 text-white"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex-1">
+                <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  Aspect ratio {(dimensionLock || lockedByParent) && "(locked for govt forms)"}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {presets.map(({ label, value }) => {
+                    const isFree = value === undefined;
+                    const disabled = (dimensionLock || lockedByParent) && isFree;
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => handleAspectChange(value)}
+                        disabled={disabled}
+                        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                          disabled
+                            ? "cursor-not-allowed bg-slate-100 text-slate-400 dark:bg-slate-700 dark:text-slate-500"
+                            : aspect === value
+                              ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                              : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+              {!lockedByParent && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !dimensionLock;
+                    setDimensionLock(next);
+                    if (next && aspect === undefined && imgRef.current) {
+                      const val = 1;
+                      setAspect(val);
+                      const { width, height } = imgRef.current;
+                      const newCrop = centerAspectCrop(width, height, val);
+                      setCrop(newCrop);
+                      setCompletedCrop(newCrop);
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium ${
+                    dimensionLock
+                      ? "border-amber-500 bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+                      : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                  }`}
+                  title={dimensionLock ? "Unlock aspect ratio" : "Lock aspect ratio (govt forms)"}
+                >
+                  {dimensionLock ? <Lock className="h-4 w-4" aria-hidden /> : <LockOpen className="h-4 w-4" aria-hidden />}
+                  <span>{dimensionLock ? "Locked" : "Lock"}</span>
+                </button>
+              )}
             </div>
+
+            {cropDimensionsPx && (
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Crop size: <strong>{cropDimensionsPx.w} × {cropDimensionsPx.h} px</strong>
+                {" "}(≈ {pxToCm(cropDimensionsPx.w, DPI_FOR_CM).toFixed(1)} × {pxToCm(cropDimensionsPx.h, DPI_FOR_CM).toFixed(1)} cm at {DPI_FOR_CM} DPI)
+              </p>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -341,29 +441,31 @@ export function CropImageTool({ defaultAspect, defaultOutputFormat = "jpeg" }: C
 
       {/* Result */}
       {result && (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-semibold text-slate-900">Cropped image</h3>
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <h3 className="mb-4 text-sm font-semibold text-slate-900 dark:text-slate-100">Cropped image</h3>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
             {/* eslint-disable-next-line @next/next/no-img-element -- Blob URL preview; next/image doesn't support blob */}
             <img
               src={result.url}
               alt="Cropped result"
-              className="max-h-64 rounded-lg border border-slate-200 object-contain"
+              className="max-h-64 rounded-lg border border-slate-200 object-contain dark:border-slate-600"
             />
             <div className="flex flex-1 flex-col justify-between gap-4">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 {formatBytes(result.blob.size)} · {outputFormat.toUpperCase()}
+                {result.width && result.height && ` · ${result.width}×${result.height} px`}
               </p>
               <button
                 type="button"
                 onClick={handleDownload}
-                className="flex items-center justify-center gap-2 self-start rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
+                className="flex items-center justify-center gap-2 self-start rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
               >
                 <Download className="h-4 w-4" aria-hidden />
                 Download
               </button>
             </div>
           </div>
+          {renderResultExtras?.(result)}
         </div>
       )}
 

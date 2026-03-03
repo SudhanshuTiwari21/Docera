@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { PDFDocument } from "pdf-lib";
 import { checkAndUpdateDailyUsage } from "@/lib/usageLimit";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
-import { Upload, Download, GripVertical } from "lucide-react";
+import { Upload, Download, GripVertical, FileText } from "lucide-react";
 
 const TOOL_ID = "merge-pdf";
 const DAILY_LIMIT = 5;
@@ -13,6 +13,62 @@ function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+async function getFirstPagePreview(file: File): Promise<string | null> {
+  try {
+    const pdfjs = await import("pdfjs-dist");
+    const anyPdf = pdfjs as any;
+    if (typeof window !== "undefined") {
+      anyPdf.GlobalWorkerOptions.workerSrc =
+        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${anyPdf.version}/pdf.worker.min.js`;
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await anyPdf.getDocument({ data: arrayBuffer }).promise;
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 0.4 });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+    return canvas.toDataURL("image/jpeg", 0.9);
+  } catch {
+    return null;
+  }
+}
+
+function MergePdfPreview({ file }: { file: File }) {
+  const [thumb, setThumb] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getFirstPagePreview(file)
+      .then((url) => {
+        if (!cancelled && url) setThumb(url);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
+
+  if (!thumb) {
+    return <p className="text-xs text-slate-500 dark:text-slate-400">Loading preview…</p>;
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={thumb}
+        alt={`Preview of ${file.name}`}
+        className="h-20 w-auto rounded border border-slate-200 object-contain dark:border-slate-600"
+      />
+      <span className="text-xs text-slate-500 dark:text-slate-400">First page preview</span>
+    </div>
+  );
 }
 
 export function MergePdfTool() {
@@ -24,6 +80,8 @@ export function MergePdfTool() {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [isPremiumUser, setIsPremiumUser] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [openPreviewIndex, setOpenPreviewIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/premium-status", { credentials: "include" })
@@ -39,18 +97,22 @@ export function MergePdfTool() {
     setUsage(checkAndUpdateDailyUsage(TOOL_ID, DAILY_LIMIT, false, userId));
   }, [userId]);
 
-  const handleFileSelect = useCallback((fileList: File[]) => {
-    setError(null);
-    if (result) {
-      URL.revokeObjectURL(result.url);
-      setResult(null);
-    }
-    const valid = Array.from(fileList).filter((f) => f.type === "application/pdf");
-    setFiles(valid);
-  }, [result]);
+  const handleFileSelect = useCallback(
+    (fileList: File[]) => {
+      setError(null);
+      if (result) {
+        URL.revokeObjectURL(result.url);
+        setResult(null);
+      }
+      const valid = Array.from(fileList).filter((f) => f.type === "application/pdf");
+      setFiles(valid);
+      setOpenPreviewIndex(null);
+    },
+    [result]
+  );
 
   const moveFile = useCallback((from: number, to: number) => {
-    if (to < 0 || to >= files.length) return;
+    if (to < 0 || to >= files.length || from === to) return;
     setFiles((prev) => {
       const next = [...prev];
       const [removed] = next.splice(from, 1);
@@ -61,6 +123,7 @@ export function MergePdfTool() {
 
   const removeFile = useCallback((i: number) => {
     setFiles((prev) => prev.filter((_, idx) => idx !== i));
+    setOpenPreviewIndex((prev) => (prev === i ? null : prev));
   }, []);
 
   const runMerge = useCallback(async () => {
@@ -119,7 +182,10 @@ export function MergePdfTool() {
             <Upload className="h-6 w-6 text-slate-500" aria-hidden />
           </span>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Add PDF files (drag to reorder)
+            Add PDF files (drag cards to reorder)
+          </span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            Order matters — first file appears first in the merged PDF.
           </span>
           <input
             type="file"
@@ -134,20 +200,47 @@ export function MergePdfTool() {
             {files.map((f, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 shadow-sm dark:bg-slate-700"
+                draggable
+                onDragStart={() => setDragIndex(i)}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragIndex !== null && dragIndex !== i) moveFile(dragIndex, i);
+                }}
+                onDragEnd={() => setDragIndex(null)}
+                className="space-y-2 rounded-lg bg-white p-3 shadow-sm dark:bg-slate-700"
               >
-                <span className="text-slate-400" aria-hidden>
-                  <GripVertical className="h-4 w-4" />
-                </span>
-                <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-300">{f.name}</span>
-                <span className="text-xs text-slate-500">{formatBytes(f.size)}</span>
-                <button
-                  type="button"
-                  onClick={() => removeFile(i)}
-                  className="text-sm font-medium text-slate-600 hover:text-red-600 dark:text-slate-400"
-                >
-                  Remove
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="cursor-grab text-slate-400" aria-hidden>
+                    <GripVertical className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm text-slate-700 dark:text-slate-300">{f.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{formatBytes(f.size)}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setOpenPreviewIndex((prev) => (prev === i ? null : i))}
+                    className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="text-xs font-medium text-slate-600 hover:text-red-600 dark:text-slate-400"
+                  >
+                    Remove
+                  </button>
+                </div>
+                {openPreviewIndex === i && (
+                  <div className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-2 dark:border-slate-600 dark:bg-slate-800/60">
+                    <div className="mb-1 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                      <FileText className="h-3 w-3" aria-hidden />
+                      <span>First page preview</span>
+                    </div>
+                    <MergePdfPreview file={f} />
+                  </div>
+                )}
               </div>
             ))}
             <div className="flex gap-2">

@@ -9,6 +9,85 @@ import { Upload, Download } from "lucide-react";
 const TOOL_ID = "split-pdf";
 const DAILY_LIMIT = 5;
 
+async function getSplitPreviewUrls(file: File): Promise<{ first: string; last: string } | null> {
+  try {
+    const pdfjs = await import("pdfjs-dist");
+    const anyPdf = pdfjs as any;
+    if (typeof window !== "undefined") {
+      anyPdf.GlobalWorkerOptions.workerSrc =
+        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${anyPdf.version}/pdf.worker.min.js`;
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await anyPdf.getDocument({ data: arrayBuffer }).promise;
+    const numPages = pdf.numPages;
+    if (numPages < 1) return null;
+    const scale = 0.5;
+    const renderPage = async (pageNum: number): Promise<string> => {
+      const page = await pdf.getPage(pageNum);
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement("canvas");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return "";
+      await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+      return canvas.toDataURL("image/jpeg", 0.8);
+    };
+    const [first, last] = await Promise.all([
+      renderPage(1),
+      numPages > 1 ? renderPage(numPages) : renderPage(1),
+    ]);
+    return { first, last };
+  } catch {
+    return null;
+  }
+}
+
+function SplitPdfPreview({ file }: { file: File }) {
+  const [preview, setPreview] = useState<{ first: string; last: string } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getSplitPreviewUrls(file)
+      .then((p) => {
+        if (!cancelled && p) setPreview(p);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
+
+  if (!preview) {
+    return <p className="text-xs text-slate-500 dark:text-slate-400">Loading preview…</p>;
+  }
+
+  return (
+    <div className="flex gap-4">
+      <div>
+        <p className="mb-1 text-xs font-medium text-slate-500 dark:text-slate-400">First page</p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={preview.first}
+          alt="First page"
+          className="max-h-32 rounded border border-slate-200 object-contain dark:border-slate-600"
+        />
+      </div>
+      {preview.first !== preview.last && (
+        <div>
+          <p className="mb-1 text-xs font-medium text-slate-500 dark:text-slate-400">Last page</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={preview.last}
+            alt="Last page"
+            className="max-h-32 rounded border border-slate-200 object-contain dark:border-slate-600"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export type SplitMode = "all" | "range" | "single";
 
 export function SplitPdfTool() {
@@ -164,16 +243,22 @@ export function SplitPdfTool() {
           />
         </label>
         {file && numPages !== null && (
-          <div className="mt-4 flex items-center justify-between rounded-lg bg-white px-4 py-2 shadow-sm dark:bg-slate-700">
-            <span className="truncate text-sm text-slate-700 dark:text-slate-300">{file.name}</span>
-            <span className="text-sm text-slate-500">{numPages} page(s)</span>
-            <button
-              type="button"
-              onClick={() => handleFileSelect(null)}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-            >
-              Replace
-            </button>
+          <div className="mt-4 space-y-3 rounded-lg bg-white px-4 py-3 shadow-sm dark:bg-slate-700">
+            <div className="flex items-center justify-between gap-2">
+              <span className="truncate text-sm text-slate-700 dark:text-slate-300">{file.name}</span>
+              <span className="text-sm text-slate-500">{numPages} page(s)</span>
+              <button
+                type="button"
+                onClick={() => handleFileSelect(null)}
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              >
+                Replace
+              </button>
+            </div>
+            <div className="border-t border-slate-200 pt-3 text-xs text-slate-600 dark:border-slate-600 dark:text-slate-300">
+              <p className="mb-2 font-medium">Preview before split</p>
+              <SplitPdfPreview file={file} />
+            </div>
           </div>
         )}
       </div>

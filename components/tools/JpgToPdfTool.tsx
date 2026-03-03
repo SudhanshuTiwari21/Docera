@@ -4,10 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import { checkAndUpdateDailyUsage } from "@/lib/usageLimit";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
-import { Upload, Download } from "lucide-react";
+import { Upload, Download, GripVertical, X } from "lucide-react";
 
 const TOOL_ID = "jpg-to-pdf";
 const DAILY_LIMIT = 10;
+
+const PAGE_SIZES = [
+  { id: "a4" as const, label: "A4" },
+  { id: "letter" as const, label: "Letter" },
+];
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -25,13 +30,29 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function ImageThumb({ file }: { file: File }) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    const u = URL.createObjectURL(file);
+    setUrl(u);
+    return () => URL.revokeObjectURL(u);
+  }, [file]);
+  if (!url) return <div className="h-full w-full bg-slate-200 dark:bg-slate-700" />;
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img src={url} alt="" className="h-full w-full object-contain" />
+  );
+}
+
 export function JpgToPdfTool() {
   const [files, setFiles] = useState<File[]>([]);
   const [result, setResult] = useState<{ blob: Blob; url: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [orientation, setOrientation] = useState<"portrait" | "landscape">("portrait");
+  const [pageSize, setPageSize] = useState<"a4" | "letter">("a4");
   const [usage, setUsage] = useState({ allowed: true, count: 0, limit: DAILY_LIMIT });
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [isPremiumUser, setIsPremiumUser] = useState(false);
@@ -51,30 +72,42 @@ export function JpgToPdfTool() {
     setUsage(checkAndUpdateDailyUsage(TOOL_ID, DAILY_LIMIT, false, userId));
   }, [userId]);
 
-  const handleFileSelect = useCallback((fileList: File[] | null) => {
+  const handleFileSelect = useCallback((fileList: File[] | null, append = false) => {
     setError(null);
     if (result) {
       URL.revokeObjectURL(result.url);
       setResult(null);
     }
     if (!fileList?.length) {
-      setFiles([]);
+      if (!append) setFiles([]);
       return;
     }
-    const valid = Array.from(fileList).filter(
-      (f) => f.type.startsWith("image/")
-    );
-    setFiles(valid);
+    const valid = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
+    setFiles((prev) => (append ? [...prev, ...valid] : valid));
     if (valid.length !== fileList.length) {
       setError("Some files were skipped. Please use image files.");
     }
   }, [result]);
 
+  const moveFile = useCallback((from: number, to: number) => {
+    if (to < 0 || to >= files.length || from === to) return;
+    setFiles((prev) => {
+      const next = [...prev];
+      const [removed] = next.splice(from, 1);
+      next.splice(to, 0, removed!);
+      return next;
+    });
+  }, [files.length]);
+
+  const removeFile = useCallback((i: number) => {
+    setFiles((prev) => prev.filter((_, idx) => idx !== i));
+  }, []);
+
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
-      handleFileSelect(Array.from(e.dataTransfer.files ?? []));
+      handleFileSelect(Array.from(e.dataTransfer.files ?? []), false);
     },
     [handleFileSelect]
   );
@@ -107,7 +140,7 @@ export function JpgToPdfTool() {
       const pdf = new jsPDF({
         orientation,
         unit: "mm",
-        format: "a4",
+        format: pageSize,
       });
 
       const pageW = pdf.internal.pageSize.getWidth();
@@ -144,7 +177,7 @@ export function JpgToPdfTool() {
     } finally {
       setIsProcessing(false);
     }
-  }, [files, orientation, result, isPremiumUser, usage.allowed, userId]);
+  }, [files, orientation, pageSize, result, isPremiumUser, usage.allowed, userId]);
 
   const handleDownload = useCallback(() => {
     if (!result) return;
@@ -173,44 +206,113 @@ export function JpgToPdfTool() {
             <Upload className="h-6 w-6 text-slate-500" aria-hidden />
           </span>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Drag & drop images, or click to browse
+            Drag & drop images (or click), add multiple at once
           </span>
           <input
             type="file"
             accept="image/*"
             multiple
             className="hidden"
-            onChange={(e) => handleFileSelect(Array.from(e.target.files ?? []))}
+            id="jpg-pdf-input"
+            onChange={(e) => handleFileSelect(Array.from(e.target.files ?? []), false)}
           />
         </label>
         {files.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white px-4 py-2 shadow-sm dark:bg-slate-700">
-            <span className="text-sm text-slate-700 dark:text-slate-300">{files.length} image(s) selected</span>
-            <button
-              type="button"
-              onClick={() => handleFileSelect(null)}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-            >
-              Clear
-            </button>
+          <div className="mt-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Order = PDF page order — drag to reorder
+              </span>
+              <div className="flex gap-2">
+                <label className="cursor-pointer rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
+                  Add more
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleFileSelect(Array.from(e.target.files ?? []), true)}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleFileSelect(null)}
+                  className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                >
+                  Clear all
+                </button>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              {files.map((f, i) => (
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={() => setDragIndex(i)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (dragIndex !== null && dragIndex !== i) moveFile(dragIndex, i);
+                  }}
+                  onDragEnd={() => setDragIndex(null)}
+                  className="relative flex flex-col rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-700"
+                >
+                  <div className="flex aspect-square items-center justify-center overflow-hidden rounded-t-lg bg-slate-100 dark:bg-slate-800">
+                    <ImageThumb file={f} />
+                  </div>
+                  <div className="flex items-center gap-1 px-2 py-1.5">
+                    <span className="cursor-grab text-slate-400" aria-hidden>
+                      <GripVertical className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-xs text-slate-600 dark:text-slate-300">{f.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(i)}
+                      className="shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-200 hover:text-red-600 dark:hover:bg-slate-600"
+                      aria-label={`Remove ${f.name}`}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <span className="absolute left-1 top-1 rounded bg-slate-900/80 px-1.5 py-0.5 text-xs font-medium text-white">
+                    {i + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
 
       {files.length > 0 && (
         <>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Page orientation
-            </label>
-            <select
-              value={orientation}
-              onChange={(e) => setOrientation(e.target.value as "portrait" | "landscape")}
-              className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-            >
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
+          <div className="flex flex-wrap gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Page size
+              </label>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(e.target.value as "a4" | "letter")}
+                className="w-full max-w-[120px] rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              >
+                {PAGE_SIZES.map((s) => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Orientation
+              </label>
+              <select
+                value={orientation}
+                onChange={(e) => setOrientation(e.target.value as "portrait" | "landscape")}
+                className="w-full max-w-[140px] rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              >
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
           </div>
           <button
             type="button"

@@ -100,18 +100,37 @@ export type SmartOptimizeResult = {
   reductionPercent: number;
 };
 
+export type SmartOptimizeStrategy = "smart" | "aggressive";
+
+/** Options for smart optimize: target size and quality strategy */
+export type SmartOptimizeOptions = {
+  targetKb: number;
+  /** "smart" = prefer quality (start 0.9, smaller steps). "aggressive" = smaller file (start 0.7, larger steps) */
+  strategy?: SmartOptimizeStrategy;
+};
+
 /**
  * Smart optimize: reduce quality and dimensions iteratively until target size is met.
  */
-export async function smartOptimizeImage(file: File, targetKb: number): Promise<SmartOptimizeResult> {
-  const targetBytes = Math.max(1024, targetKb * 1024);
+export async function smartOptimizeImage(
+  file: File,
+  targetKbOrOptions: number | SmartOptimizeOptions
+): Promise<SmartOptimizeResult> {
+  const options: SmartOptimizeOptions =
+    typeof targetKbOrOptions === "number"
+      ? { targetKb: targetKbOrOptions, strategy: "smart" }
+      : { strategy: "smart", ...targetKbOrOptions };
+  const targetBytes = Math.max(1024, options.targetKb * 1024);
+  const aggressive = options.strategy === "aggressive";
   const img = await loadImage(file);
 
   let width = img.naturalWidth;
   let height = img.naturalHeight;
-  let quality = 0.9;
+  let quality = aggressive ? 0.7 : 0.9;
+  const qualityStep = aggressive ? 0.12 : QUALITY_STEP;
   let blob: Blob | null = null;
   let scaleFactor = 1;
+  const scaleStep = aggressive ? 0.1 : 0.05;
   let iterations = 0;
 
   const canvas = document.createElement("canvas");
@@ -142,10 +161,10 @@ export async function smartOptimizeImage(file: File, targetKb: number): Promise<
           reductionPercent,
         };
       }
-      q -= QUALITY_STEP;
+      q -= qualityStep;
     }
 
-    scaleFactor -= 0.05;
+    scaleFactor -= scaleStep;
     if (scaleFactor < 0.25) break;
     iterations++;
   }
