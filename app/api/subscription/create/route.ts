@@ -34,7 +34,16 @@ export async function POST(request: Request) {
     planId = plan === "yearly" ? (PLAN_YEARLY_ID ?? await createPlan("yearly")) : (PLAN_MONTHLY_ID ?? await createPlan("monthly"));
   } catch (err: unknown) {
     console.error("[subscription/create] plan", err);
-    const raw = err as { error?: { description?: string }; description?: string; message?: string };
+    const raw = err as { statusCode?: number; error?: { description?: string; code?: string }; description?: string; message?: string };
+    if (raw?.statusCode === 401) {
+      return NextResponse.json(
+        {
+          error:
+            "Razorpay authentication failed. Check that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are correct, from the same key pair, and both Test or both Live.",
+        },
+        { status: 502 }
+      );
+    }
     const message =
       raw?.error?.description ?? raw?.description ?? (err instanceof Error ? err.message : null) ?? "Failed to get plan";
     const hint =
@@ -57,8 +66,18 @@ export async function POST(request: Request) {
       subscription_id: subscriptionId,
       key: KEY_ID,
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("[subscription/create]", err);
+    const raw = err as { statusCode?: number; error?: { description?: string; code?: string } };
+    if (raw?.statusCode === 401) {
+      return NextResponse.json(
+        {
+          error:
+            "Razorpay authentication failed. Check that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are correct, from the same key pair, and both Test or both Live.",
+        },
+        { status: 502 }
+      );
+    }
     return NextResponse.json({ error: "Failed to create subscription" }, { status: 500 });
   }
 }
