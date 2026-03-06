@@ -21,7 +21,7 @@ async function getFirstPagePreview(file: File): Promise<string | null> {
     const anyPdf = pdfjs as any;
     if (typeof window !== "undefined") {
       anyPdf.GlobalWorkerOptions.workerSrc =
-        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${anyPdf.version}/pdf.worker.min.js`;
+        `https://cdn.jsdelivr.net/npm/pdfjs-dist@${anyPdf.version}/build/pdf.worker.min.mjs`;
     }
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await anyPdf.getDocument({ data: arrayBuffer }).promise;
