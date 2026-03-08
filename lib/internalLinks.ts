@@ -56,3 +56,12 @@ export const pdfToolsLinks: InternalLink[] = [
   { href: "/tools/split-pdf", label: "Split PDF" },
   { href: "/tools/pdf-to-jpg", label: "PDF to JPG converter" },
 ];
+
+/** Tool and guide hub pages – for internal linking from tool and exam pages */
+export const toolHubLinks: InternalLink[] = [
+  { href: "/tools", label: "All tools" },
+  { href: "/tools/image-tools", label: "Image tools" },
+  { href: "/tools/pdf-tools", label: "PDF tools" },
+  { href: "/guides", label: "Guides" },
+  { href: "/guides/exam-photo-requirements", label: "Exam photo & signature requirements" },
+];

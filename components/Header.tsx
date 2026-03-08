@@ -162,6 +162,25 @@ export function Header() {
           />
         )}
       </div>
+
+      <Link
+        href="/tools/image-tools"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-neutral-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        Image Tools
+      </Link>
+      <Link
+        href="/tools/pdf-tools"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-neutral-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        PDF Tools
+      </Link>
+      <Link
+        href="/guides"
+        className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-neutral-800 dark:hover:text-slate-100 lg:px-3"
+      >
+        Guides
+      </Link>
     </nav>
   );
 
@@ -300,6 +319,27 @@ export function Header() {
             columns={allPdfToolsColumns}
             onLinkClick={() => setMobileOpen(false)}
           />
+          <Link
+            href="/tools/image-tools"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-neutral-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            Image Tools
+          </Link>
+          <Link
+            href="/tools/pdf-tools"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-neutral-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            PDF Tools
+          </Link>
+          <Link
+            href="/guides"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-neutral-800"
+            onClick={() => setMobileOpen(false)}
+          >
+            Guides
+          </Link>
           <div className="mt-2 flex gap-2 border-t border-slate-200 pt-3 dark:border-neutral-700">
             {user ? (
               <>

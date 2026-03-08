@@ -16,17 +16,17 @@ import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
 export const metadata: Metadata = {
   ...getDefaultMetadata({
-    title: "Dockera – Free Online Document & Image Tools",
+    title: "Dockera – Free Online PDF & Image Tools",
     description:
-      "Every tool you need for documents and images in one place. Resize images for government forms, compress PDFs, create passport photos, extract signatures. 100% free, private, and easy to use.",
+      "Free online PDF and image tools: resize image 100kb for govt forms, compress PDFs, passport photo maker, signature extractor. Resize images for government forms, compress PDFs, create passport photos and extract signatures instantly.",
     keywords: [
-      "resize image",
+      "PDF tools",
+      "image tools",
+      "resize image 100kb",
+      "passport photo maker",
       "compress PDF",
-      "passport photo",
       "signature extractor",
       "document tools online",
-      "image resizer",
-      "PDF compressor",
       "government form photo",
     ],
     path: "/",
@@ -89,14 +89,20 @@ export default function HomePage() {
               id="hero-heading"
               className="animate-hero-headline text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl lg:text-4xl"
             >
-              Every tool you need for documents & images in one place
+              Free Online PDF & Image Tools
             </h1>
             <p className="animate-hero-subtitle mt-5 max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-300 sm:text-l">
-              Resize images for government forms, compress PDFs, create passport photos, and extract signatures.{" "}
+              Resize images for government forms, compress PDFs, create passport photos and extract signatures instantly.{" "}
               <strong className="animate-hero-highlight inline-block px-1 rounded">100% free</strong>
               {" "}and easy to use — no sign-up required.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/tools"
+                className="animate-hero-buttons animate-hero-btn-1 inline-flex items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 px-5 py-3.5 text-base font-semibold text-white dark:text-slate-900 shadow-sm hover:bg-slate-800 dark:hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:focus-visible:outline-slate-100 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                All tools
+              </Link>
               <Link
                 href="/tools/resize-image-to-100kb"
                 className="animate-hero-buttons animate-hero-btn-1 inline-flex items-center justify-center rounded-xl bg-slate-900 dark:bg-slate-100 px-5 py-3.5 text-base font-semibold text-white dark:text-slate-900 shadow-sm hover:bg-slate-800 dark:hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:focus-visible:outline-slate-100 transition-transform hover:scale-[1.02] active:scale-[0.98]"
@@ -128,7 +134,13 @@ export default function HomePage() {
         <div className="text-center">
           <TrueFocusHeading />
           <p className="mt-1.5 text-slate-600 dark:text-slate-400">
-            All tools are free. Processing runs in your browser when possible.
+            All tools are free. Processing runs in your browser when possible. Browse by category:{" "}
+            <Link href="/tools/image-tools" className="font-medium text-slate-900 underline dark:text-slate-100 hover:no-underline">image tools</Link>
+            {" · "}
+            <Link href="/tools/pdf-tools" className="font-medium text-slate-900 underline dark:text-slate-100 hover:no-underline">PDF tools</Link>
+            {" · "}
+            <Link href="/guides" className="font-medium text-slate-900 underline dark:text-slate-100 hover:no-underline">guides</Link>
+            .
           </p>
         </div>
         <ul className="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -188,7 +200,19 @@ export default function HomePage() {
           heading="Frequently asked questions"
           subheading="Quick answers about Dockera and our tools."
         >
-          Need to resize for a specific form? See our guides on{" "}
+          Explore our{" "}
+          <Link href="/tools" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
+            PDF and image tools
+          </Link>
+          ,{" "}
+          <Link href="/tools/image-tools" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
+            image tools
+          </Link>
+          , and{" "}
+          <Link href="/guides" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
+            guides
+          </Link>
+          . Need to resize for a specific form? See{" "}
           <Link href="/resize-image-for-ssc-form" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
             SSC photo size
           </Link>
@@ -196,7 +220,7 @@ export default function HomePage() {
           <Link href="/resize-image-for-upsc-form" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
             UPSC photo size
           </Link>
-          , or use the{" "}
+          , or the{" "}
           <Link href="/tools/resize-image-to-100kb" className="font-medium text-slate-900 dark:text-slate-200 underline underline-offset-2 hover:no-underline">
             resize image to 100KB
           </Link>{" "}

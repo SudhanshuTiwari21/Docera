@@ -3,11 +3,12 @@ import {
   resizeToolLinks,
   pdfToolLinks,
   examPhotoGuidesLinks,
+  toolHubLinks,
 } from "@/lib/internalLinks";
 
 type SectionHeadingLevel = 2 | 3;
 
-/** Renders the three standard internal link sections for tool and guide pages. */
+/** Renders the standard internal link sections for tool and guide pages (image tools, PDF tools, exam guides, hubs). */
 export function RelatedToolsLinks({
   headingLevel = 2,
 }: {
@@ -28,6 +29,11 @@ export function RelatedToolsLinks({
       <InternalLinksSection
         title="Exam Photo Guides"
         links={examPhotoGuidesLinks}
+        headingLevel={headingLevel}
+      />
+      <InternalLinksSection
+        title="Tool & guide hubs"
+        links={toolHubLinks}
         headingLevel={headingLevel}
       />
     </div>

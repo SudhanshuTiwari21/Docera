@@ -22,6 +22,24 @@ export type ToolEntry = {
 /** All tools for the landing grid and dropdowns. Single source of truth for SEO and nav. */
 export const allTools: ToolEntry[] = [
   {
+    href: "/tools/image-resizer",
+    title: "Exam Smart Resizer",
+    description: "One-click resize for Indian exams. Select SSC CGL, UPSC CSE, Railway, IBPS—auto-set dimensions and KB.",
+    icon: ImageIcon,
+  },
+  {
+    href: "/tools/resize-image-to-20kb",
+    title: "Resize Image to 20KB",
+    description: "Resize image to 20KB online for government forms with strict size limits.",
+    icon: ImageIcon,
+  },
+  {
+    href: "/tools/resize-image-to-50kb",
+    title: "Resize Image to 50KB",
+    description: "Resize image to 50KB online for government forms and uploads.",
+    icon: ImageIcon,
+  },
+  {
     href: "/tools/resize-image-to-100kb",
     title: "Resize Image",
     description: "Resize images to 20KB, 50KB or 100KB for government forms and uploads.",
@@ -171,3 +189,36 @@ export const convertPdfDropdownTools = [
   if (!t) throw new Error(`Unknown tool href: ${href}`);
   return { href: t.href, title: t.title, icon: t.icon };
 });
+
+/** Hrefs for Image Tools hub (/tools/image-tools). */
+export const imageToolHrefs: string[] = [
+  "/tools/image-resizer",
+  "/tools/resize-image-to-20kb",
+  "/tools/resize-image-to-50kb",
+  "/tools/resize-image-to-100kb",
+  "/tools/compress-image",
+  "/tools/crop-image",
+  "/tools/convert-to-png",
+  "/tools/convert-from-jpg",
+  "/tools/passport-photo",
+  "/tools/signature-extractor",
+];
+
+/** Hrefs for PDF Tools hub (/tools/pdf-tools). */
+export const pdfToolHrefs: string[] = [
+  "/tools/pdf-compressor",
+  "/tools/merge-pdf",
+  "/tools/split-pdf",
+  "/tools/pdf-to-jpg",
+  "/tools/jpg-to-pdf",
+  "/tools/image-to-pdf",
+];
+
+/** Get tool entries by hrefs (for hub pages). */
+export function getToolsByHrefs(hrefs: string[]): ToolEntry[] {
+  return hrefs.map((href) => {
+    const t = byHref.get(href);
+    if (!t) throw new Error(`Unknown tool href: ${href}`);
+    return t;
+  });
+}

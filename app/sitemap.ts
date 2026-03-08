@@ -9,6 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: { path: string; changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never"; priority: number }[] = [
     // Home
     { path: "", changeFrequency: "weekly", priority: 1 },
+    // Tool hubs
+    { path: "/tools", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/tools/image-tools", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/tools/pdf-tools", changeFrequency: "weekly", priority: 0.9 },
     // Tools
     { path: "/tools/image-resizer", changeFrequency: "monthly", priority: 0.9 },
     { path: "/tools/resize-image-to-100kb", changeFrequency: "monthly", priority: 0.9 },
@@ -49,6 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/rajasthan-police-photo-signature-requirements", changeFrequency: "monthly", priority: 0.8 },
     // Guides
     { path: "/guides", changeFrequency: "weekly", priority: 0.7 },
+    { path: "/guides/exam-photo-requirements", changeFrequency: "monthly", priority: 0.8 },
     { path: "/guides/how-to-resize-image-for-government-forms", changeFrequency: "monthly", priority: 0.8 },
     // Static pages
     { path: "/pricing", changeFrequency: "weekly", priority: 0.8 },
