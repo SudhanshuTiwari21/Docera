@@ -36,7 +36,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment
 
-Set `NEXT_PUBLIC_SITE_URL` for production (e.g. `https://dockera.in`) so canonical URLs and sitemap use the correct domain.
+Set `NEXT_PUBLIC_SITE_URL` for production to exactly `https://www.dockera.in` (www, no trailing slash) so canonical URLs and sitemap use the correct domain. The apex domain 301s to www, so using the apex here makes Google see sitemap URLs that redirect and canonicals that point back at the redirecting host.
 
 ## Folder structure
 

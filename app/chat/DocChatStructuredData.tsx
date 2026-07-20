@@ -3,7 +3,7 @@
  * @see https://developers.google.com/search/docs/appearance/structured-data
  */
 export function DocChatStructuredData() {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in").replace(/\/$/, "");
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dockera.in").replace(/\/$/, "");
   const url = `${base}/chat`;
 
   const graph = {

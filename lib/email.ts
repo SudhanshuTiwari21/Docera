@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dockera.in";
 const FROM = process.env.RESEND_FROM ?? process.env.SMTP_FROM ?? "Dockera <info@dockera.in>";
 
 const resendApiKey = process.env.RESEND_API_KEY;

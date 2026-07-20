@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dockera.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = SITE_URL.replace(/\/$/, "");
@@ -61,8 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/guides/how-to-resize-image-for-government-forms", changeFrequency: "monthly", priority: 0.8 },
     // Static pages
     { path: "/pricing", changeFrequency: "weekly", priority: 0.8 },
-    { path: "/login", changeFrequency: "monthly", priority: 0.5 },
-    { path: "/signup", changeFrequency: "monthly", priority: 0.5 },
+    // /login and /signup omitted: no SEO value, and they dilute crawl budget.
     { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];

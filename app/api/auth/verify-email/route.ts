@@ -4,7 +4,7 @@ import { consumeVerificationToken } from "@/lib/verification";
 import { createSessionToken, setSessionCookie } from "@/lib/auth";
 import { checkAuthRateLimit, recordAuthAttempt } from "@/lib/authRateLimit";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dockera.in";
 
 export async function GET(request: Request) {
   const allowed = await checkAuthRateLimit(request, "auth");

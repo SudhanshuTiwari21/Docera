@@ -1,4 +1,4 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dockera.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dockera.in";
 
 export type MetadataParams = {
   title?: string;
