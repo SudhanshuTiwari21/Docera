@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { ConditionalFooter } from "@/components/ConditionalFooter";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { DocChatFab } from "@/components/DocChatFab";
+import { SiteStructuredData } from "@/components/seo/SiteStructuredData";
 
 export const metadata: Metadata = {
   ...getDefaultMetadata(),
@@ -53,13 +54,14 @@ export default function RootLayout({
     <html lang="en-IN" className="h-full" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <SiteStructuredData />
       </head>
       <body className="flex min-h-full flex-col antialiased bg-background text-foreground">
         <ThemeProvider>
           {/* Single flex column so main grows and footer stays at bottom of viewport on short pages */}
           <div className="flex min-h-full flex-1 flex-col">
             <Header />
-            <main className="flex w-full flex-1 flex-col min-h-0">{children}</main>
+            <main className="flex w-full min-w-0 max-w-full flex-1 flex-col min-h-0">{children}</main>
             <ConditionalFooter />
           </div>
           <DocChatFab />

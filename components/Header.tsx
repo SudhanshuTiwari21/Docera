@@ -184,10 +184,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white dark:border-neutral-800 dark:bg-black">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 pl-6 pr-6 sm:pl-8 sm:pr-8 lg:gap-8 lg:pl-10 lg:pr-10">
+      <div className="mx-auto flex h-14 max-w-7xl min-w-0 items-center gap-3 px-4 sm:gap-6 sm:pl-8 sm:pr-8 lg:gap-8 lg:pl-10 lg:pr-10">
         <Link
           href="/"
-          className="mr-6 flex shrink-0 items-center lg:mr-8"
+          className="mr-2 flex max-w-[42%] shrink-0 items-center sm:mr-6 sm:max-w-none lg:mr-8"
           aria-label="Dockera – Home"
         >
           <Image
@@ -195,7 +195,7 @@ export function Header() {
             alt="Dockera"
             width={360}
             height={104}
-            className="h-20 w-auto object-contain sm:h-24 lg:h-24 dark:hidden"
+            className="h-9 w-auto max-w-full object-contain sm:h-24 lg:h-24 dark:hidden"
             priority
           />
           <Image
@@ -203,7 +203,7 @@ export function Header() {
             alt="Dockera"
             width={360}
             height={104}
-            className="hidden h-20 w-auto object-contain dark:block sm:h-24 lg:h-32"
+            className="hidden h-9 w-auto max-w-full object-contain dark:block sm:h-24 lg:h-32"
             priority
           />
         </Link>
@@ -214,7 +214,7 @@ export function Header() {
         </div>
 
         {/* Right: Pricing, Login, Sign up, theme, mobile menu – z-10 + bg so it stays on top of nav overflow */}
-        <div className="relative z-10 ml-auto flex shrink-0 items-center gap-2 bg-white pl-6 dark:bg-black sm:gap-3">
+        <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1.5 bg-white pl-2 dark:bg-black sm:gap-3 sm:pl-6">
           <div className="hidden items-center gap-3 sm:flex">
             <Link
               href="/pricing"

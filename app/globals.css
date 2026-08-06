@@ -25,6 +25,37 @@ body {
   background: var(--background);
 }
 
+/* Mobile: kill horizontal page scroll without changing desktop layout.
+   clip (not hidden) avoids creating a scroll container that traps sticky/fixed UI. */
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  main {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* Shared page shells — keep content inside the viewport */
+  main > div,
+  main > article,
+  main > section {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* Long URLs / unbroken strings in tool & guide copy */
+  main p,
+  main li,
+  main td,
+  main th {
+    overflow-wrap: anywhere;
+  }
+}
+
 /* DocChat: stop the document from growing with a long sidebar list (flex min-height:auto chain). */
 html:has([data-docchat-shell]),
 body:has([data-docchat-shell]) {

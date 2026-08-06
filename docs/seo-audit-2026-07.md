@@ -7,6 +7,7 @@
 
 Everything in Sections 1–5, 7–9 and 13 is derived from **live HTTP responses and repo code**, captured 2026-07-20. Raw crawl is reproducible via the commands in Appendix A.
 
+
 What I could **not** measure, and therefore do not assert:
 
 - **Keyword volume / difficulty.** No Ahrefs/Semrush/GKP access. Section 6 gives clusters, intent and priority *reasoning* — the Priority column is my judgment, not a measured KD. Validate with a real tool before committing content budget.

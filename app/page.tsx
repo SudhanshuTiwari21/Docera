@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getDefaultMetadata } from "@/lib/seo";
 import { allTools } from "@/lib/toolsData";
+import { examPhotoGuidesLinks } from "@/lib/internalLinks";
 import { HeroDemo } from "@/components/HeroDemo";
 import { TrueFocusHeading } from "@/components/TrueFocusHeading";
 import {
@@ -199,6 +200,38 @@ export default function HomePage() {
             ))}
           </ul>
         </div>
+      </section>
+
+      {/* Exam-wise photo & signature requirements – internal links to all exam landings */}
+      <section
+        className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8"
+        aria-labelledby="exam-requirements-heading"
+      >
+        <div className="text-center">
+          <h2
+            id="exam-requirements-heading"
+            className="text-2xl font-bold text-slate-900 dark:text-slate-100 sm:text-3xl"
+          >
+            Exam-wise photo &amp; signature requirements
+          </h2>
+          <p className="mt-2 mx-auto max-w-2xl text-slate-600 dark:text-slate-400">
+            Exact photo and signature size, dimensions and format for popular government exams —
+            plus the right tool to resize your image in seconds.
+          </p>
+        </div>
+        <ul className="mt-8 grid gap-x-6 gap-y-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {examPhotoGuidesLinks.map(({ href, label }) => (
+            <li key={href}>
+              <Link
+                href={href}
+                className="group flex items-center gap-2 rounded-lg px-2 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-neutral-900 hover:text-slate-900 dark:hover:text-slate-100"
+              >
+                <ArrowRight className="h-4 w-4 flex-shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-slate-600 dark:group-hover:text-slate-300" aria-hidden />
+                <span className="text-sm font-medium underline-offset-2 group-hover:underline">{label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* FAQ */}

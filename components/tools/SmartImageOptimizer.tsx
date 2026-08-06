@@ -343,18 +343,24 @@ export function SmartImageOptimizer({
     a.click();
   }, []);
 
-  const modes: { id: SmartImageOptimizerMode; label: string; icon: React.ReactNode; recommended?: boolean }[] = [
-    { id: "exam", label: "Indian Exams", icon: <GraduationCap className="h-4 w-4" aria-hidden />, recommended: true },
-    { id: "smart", label: "Smart Optimize (Exact KB)", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
-    { id: "resize", label: "Resize (Dimensions)", icon: <Maximize2 className="h-4 w-4" aria-hidden /> },
-    { id: "compress", label: "Compress (Quality)", icon: <Zap className="h-4 w-4" aria-hidden /> },
+  const modes: {
+    id: SmartImageOptimizerMode;
+    label: string;
+    shortLabel: string;
+    icon: React.ReactNode;
+    recommended?: boolean;
+  }[] = [
+    { id: "exam", label: "Indian Exams", shortLabel: "Indian Exams", icon: <GraduationCap className="h-4 w-4" aria-hidden />, recommended: true },
+    { id: "smart", label: "Smart Optimize (Exact KB)", shortLabel: "Smart Optimize", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
+    { id: "resize", label: "Resize (Dimensions)", shortLabel: "Resize", icon: <Maximize2 className="h-4 w-4" aria-hidden /> },
+    { id: "compress", label: "Compress (Quality)", shortLabel: "Compress", icon: <Zap className="h-4 w-4" aria-hidden /> },
   ];
 
   const selectedExamPreset = EXAM_PRESETS.find((p) => p.id === examPresetId) ?? CUSTOM_PRESET;
 
   return (
     <section
-      className="space-y-6"
+      className="min-w-0 max-w-full space-y-6"
       aria-labelledby="smart-optimizer-heading"
     >
       <h2 id="smart-optimizer-heading" className="sr-only">
@@ -367,7 +373,7 @@ export function SmartImageOptimizer({
 
       {/* Upload Area - drag-and-drop + multi-file */}
       <div
-        className={`rounded-xl border-2 border-dashed bg-slate-50 p-8 transition-colors dark:bg-neutral-900/50 ${
+        className={`rounded-xl border-2 border-dashed bg-slate-50 p-4 transition-colors dark:bg-neutral-900/50 sm:p-8 ${
           isDragging ? "border-slate-400 bg-slate-100 dark:border-slate-500 dark:bg-slate-700/50" : "border-slate-200 dark:border-neutral-600"
         }`}
         onDrop={handleDrop}
@@ -430,8 +436,12 @@ export function SmartImageOptimizer({
         )}
       </div>
 
-      {/* Mode Tabs */}
-      <div role="tablist" aria-label="Optimization mode" className="flex gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-700">
+      {/* Mode Tabs — wrap on mobile so long labels never force horizontal page scroll */}
+      <div
+        role="tablist"
+        aria-label="Optimization mode"
+        className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-700 sm:flex sm:flex-wrap md:flex-nowrap"
+      >
         {modes.map((m) => (
           <button
             key={m.id}
@@ -440,16 +450,19 @@ export function SmartImageOptimizer({
             aria-controls={`panel-${m.id}`}
             id={`tab-${m.id}`}
             onClick={() => setMode(m.id)}
-            className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex min-w-0 items-center justify-center gap-1.5 rounded-md px-2 py-2 text-xs font-medium transition-colors sm:flex-1 sm:justify-start sm:gap-2 sm:px-3 sm:text-sm md:px-4 ${
               mode === m.id
                 ? "bg-white text-slate-900 shadow-sm dark:bg-neutral-900 dark:text-slate-100"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
             }`}
           >
-            {m.icon}
-            {m.label}
+            <span className="shrink-0">{m.icon}</span>
+            <span className="min-w-0 text-center leading-snug sm:text-left">
+              <span className="sm:hidden">{m.shortLabel}</span>
+              <span className="hidden sm:inline">{m.label}</span>
+            </span>
             {m.recommended && (
-              <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
+              <span className="hidden rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700 sm:inline dark:bg-emerald-900/40 dark:text-emerald-300">
                 Recommended
               </span>
             )}
@@ -462,7 +475,7 @@ export function SmartImageOptimizer({
         id={`panel-${mode}`}
         role="tabpanel"
         aria-labelledby={`tab-${mode}`}
-        className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-6"
       >
         {mode === "resize" && (
           <div className="space-y-4">
